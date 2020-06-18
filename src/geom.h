@@ -44,3 +44,4 @@ void boundingBox(const char *grid, int rows, int cols, coords_t &coords);
  * Convert the given char grid of rows by cols to a shape_t.
  */
 void shapeFromChars(const char *grid, int rows, int cols, shape_t &shape);
+

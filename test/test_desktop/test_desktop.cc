@@ -246,6 +246,41 @@ void test_valid_placement(void) {
   TEST_ASSERT_FALSE(validPlacement(grid, piece.shapes[UP], 18, 9));
 }
 
+void test_collide(void) {
+  const char *board_chars = "    "
+                            "    "
+                            "    "
+                            "xxx "
+                            "xx  "
+                            "xx  ";
+  const char *shape_chars = " o"
+                            " o";
+  shape_t board;
+  shape_t shape;
+  shapeFromChars(board_chars, 6, 4, board);
+  shapeFromChars(shape_chars, 2, 2, shape);
+
+  // Valid, all-on-screen placement.
+  TEST_ASSERT_FALSE(collide(board, shape, 0, 0));
+
+  // Part of the shape is off the screen. That's ok.
+  TEST_ASSERT_FALSE(collide(board, shape, 0, -1));
+  TEST_ASSERT_FALSE(collide(board, shape, -1, -1));
+
+  // Bottom tip overlaps.
+  TEST_ASSERT_TRUE(collide(board, shape, 2, 0));
+
+  // Top overlaps.
+  TEST_ASSERT_TRUE(collide(board, shape, 3, 1));
+
+  // Top and bottom overlap.
+  TEST_ASSERT_TRUE(collide(board, shape, 4, -1));
+  TEST_ASSERT_TRUE(collide(board, shape, 4, 0));
+
+  // Hidden under the lip of the thing.
+  TEST_ASSERT_FALSE(collide(board, shape, 4, 1));
+}
+
 int main(int argc, char** argv) {
   UNITY_BEGIN();
 
@@ -262,6 +297,7 @@ int main(int argc, char** argv) {
 
   RUN_TEST(test_generate_shapes);
   RUN_TEST(test_valid_placement);
+  RUN_TEST(test_collide);
 
   UNITY_END();
 }

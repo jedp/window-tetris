@@ -30,3 +30,9 @@ void getFullRowsRange(const char *board, int &start, int &end);
  */
 bool validPlacement(shape_t board, shape_t shape, int row, int col);
 
+/**
+ * Return true if any of the tiles in shape collide with tiles on the board
+ * when shape is move to row, col.
+ */
+bool collide(shape_t board, shape_t shape, int row, int col);
+
