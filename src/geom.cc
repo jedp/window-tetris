@@ -65,9 +65,27 @@ void shapeFromChars(const char *grid, int rows, int cols, shape_t &shape) {
   coords_t bbox;
   shape.rows = rows;
   shape.cols = cols;
-  shape.grid = grid;
+  shape.grid = new char[rows * cols]();
+
+  for (uint8_t i = 0; i < rows * cols; ++i) {
+    shape.grid[i] = grid[i];
+  }
 
   boundingBox(shape.grid, rows, cols, bbox);
   shape.bbox = bbox;
+}
+
+bool shapesEqual(const shape_t shape1, const shape_t shape2) {
+  if (shape1.rows != shape2.rows) return false;
+  if (shape1.cols != shape2.cols) return false;
+
+  for (uint8_t i = 0; i < shape1.rows; ++i) {
+   for (uint8_t j = 0; j < shape1.cols; ++j) {
+      if (shape1.grid[i * shape1.cols + j] != shape2.grid[i * shape1.cols + j]) {
+        return false;
+      }
+    }
+  }
+  return true;
 }
 

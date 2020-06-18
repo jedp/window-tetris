@@ -4,6 +4,7 @@
 #include <game.h>
 #include <constants.h>
 #include <unity.h>
+#include <iostream>
 
 const char *board_empty_grid =
   "          "
@@ -281,6 +282,34 @@ void test_collide(void) {
   TEST_ASSERT_FALSE(collide(board, shape, 4, 1));
 }
 
+void test_stick(void) {
+  const char *board_chars = "    "
+                            "    "
+                            "    "
+                            "xxx "
+                            "xx  "
+                            "xx  ";
+  const char *shape_chars = " o"
+                            " o";
+  shape_t board;
+  shape_t shape;
+  shapeFromChars(board_chars, 6, 4, board);
+  shapeFromChars(shape_chars, 2, 2, shape);
+
+  stick(board, shape, 4, 1);
+
+  // This is what it looks like after sticking.
+  const char *stuck_chars = "    "
+                            "    "
+                            "    "
+                            "xxx "
+                            "xxo "
+                            "xxo ";
+  shape_t expected;
+  shapeFromChars(stuck_chars, 6, 4, expected);
+  TEST_ASSERT_TRUE(shapesEqual(board, expected));
+}
+
 int main(int argc, char** argv) {
   UNITY_BEGIN();
 
@@ -298,6 +327,7 @@ int main(int argc, char** argv) {
   RUN_TEST(test_generate_shapes);
   RUN_TEST(test_valid_placement);
   RUN_TEST(test_collide);
+  RUN_TEST(test_stick);
 
   UNITY_END();
 }

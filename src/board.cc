@@ -2,6 +2,7 @@
 #include "piece.h"
 #include "board.h"
 #include "game.h"
+#include <iostream>
 
 bool noEmptySpacesInRange(const char *grid, int start, int end) {
   for (uint8_t j = start; j < end; ++j) {
@@ -49,11 +50,30 @@ bool collide(shape_t board, shape_t shape, int row, int col) {
       // i and j are in grid space.
       // Offset to get the local coordinate in the shape.
       if (shape.grid[(i - row) * shape.cols + (j - col)] != ' '
-          && board.grid[i * board.cols + i + j] != ' ') {
+          && board.grid[i * board.cols + j] != ' ') {
         return true;
       }
     }
   }
   return false;
+}
+
+void stick(shape_t board, shape_t shape, int row, int col) {
+  for (int i = row; i < (int)board.rows && i < (int)shape.rows + row; ++i) {
+    // We don't have off-screen geometry.
+    if (i < 0) continue;
+
+    for (int j = col; j < (int)board.cols && j < (int)shape.cols + col; ++j) {
+      // We don't have off-screen geometry.
+      if (j < 0) continue;
+
+      // i and j are in grid space.
+      // Offset to get the local coordinate in the shape.
+      char cell = shape.grid[(i - row) * shape.cols + (j - col)];
+      if (cell != ' ') {
+        board.grid[i * board.cols + j] = cell;
+      }
+    }
+  }
 }
 

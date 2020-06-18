@@ -36,3 +36,8 @@ bool validPlacement(shape_t board, shape_t shape, int row, int col);
  */
 bool collide(shape_t board, shape_t shape, int row, int col);
 
+/**
+ * Stick the shape to the board at the given row and column.
+ */
+void stick(shape_t board, shape_t shape, int row, int col);
+

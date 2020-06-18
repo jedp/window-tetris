@@ -18,7 +18,7 @@ typedef struct shape_t {
   uint8_t rows;
   uint8_t cols;
   coords_t bbox;
-  const char *grid;
+  char *grid; // Mutable
 } shape_t;
 
 /**
@@ -44,4 +44,9 @@ void boundingBox(const char *grid, int rows, int cols, coords_t &coords);
  * Convert the given char grid of rows by cols to a shape_t.
  */
 void shapeFromChars(const char *grid, int rows, int cols, shape_t &shape);
+
+/**
+ * Return true if the shapes are the same. False otherwise.
+ */
+bool shapesEqual(const shape_t shape1, const shape_t shape2);
 
