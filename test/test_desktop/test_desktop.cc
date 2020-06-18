@@ -5,7 +5,7 @@
 #include <constants.h>
 #include <unity.h>
 
-const char *board_empty =
+const char *board_empty_grid =
   "          "
   "          "
   "          "
@@ -27,7 +27,7 @@ const char *board_empty =
   "          "
   "          ";
 
-const char *board0 =
+const char *board0_grid =
   "          "
   "          "
   "          "
@@ -49,7 +49,7 @@ const char *board0 =
   "ILLLTTZZI "
   "IOOSTIZZI ";
 
-const char *board1 =
+const char *board1_grid =
   "          "
   "          "
   "          "
@@ -74,7 +74,7 @@ const char *board1 =
 void test_empty_rows(void) {
   int start = -2;
   int end = -2;
-  getFullRowsRange(board0, start, end);
+  getFullRowsRange(board0_grid, start, end);
   TEST_ASSERT_EQUAL(-1, start);
   TEST_ASSERT_EQUAL(-1, end);
 }
@@ -82,7 +82,7 @@ void test_empty_rows(void) {
 void test_non_empty_rows(void) {
   int start = -2;
   int end = -2;
-  getFullRowsRange(board1, start, end);
+  getFullRowsRange(board1_grid, start, end);
   TEST_ASSERT_EQUAL(160, start);
   TEST_ASSERT_EQUAL(200, end);
 }
@@ -232,15 +232,18 @@ void test_valid_placement(void) {
   piece_t piece;
   generateFromShapes(shapes_J, rows, cols, piece);
 
-  TEST_ASSERT_TRUE(validPlacement(board_empty, 20, 10, piece.shapes[UP], 0, 0));
-  TEST_ASSERT_TRUE(validPlacement(board_empty, 20, 10, piece.shapes[UP], 0, 8));
-  TEST_ASSERT_TRUE(validPlacement(board_empty, 20, 10, piece.shapes[UP], 19, 0));
-  TEST_ASSERT_TRUE(validPlacement(board_empty, 20, 10, piece.shapes[UP], 19, 8));
+  shape_t grid;
+  shapeFromChars(board_empty_grid, 20, 10, grid);
 
-  TEST_ASSERT_FALSE(validPlacement(board_empty, 20, 10, piece.shapes[UP], -1, 0));
-  TEST_ASSERT_FALSE(validPlacement(board_empty, 20, 10, piece.shapes[UP], 0, 9));
-  TEST_ASSERT_FALSE(validPlacement(board_empty, 20, 10, piece.shapes[UP], 20, 0));
-  TEST_ASSERT_FALSE(validPlacement(board_empty, 20, 10, piece.shapes[UP], 18, 9));
+  TEST_ASSERT_TRUE(validPlacement(grid, piece.shapes[UP], 0, 0));
+  TEST_ASSERT_TRUE(validPlacement(grid, piece.shapes[UP], 0, 8));
+  TEST_ASSERT_TRUE(validPlacement(grid, piece.shapes[UP], 19, 0));
+  TEST_ASSERT_TRUE(validPlacement(grid, piece.shapes[UP], 19, 8));
+
+  TEST_ASSERT_FALSE(validPlacement(grid, piece.shapes[UP], -1, 0));
+  TEST_ASSERT_FALSE(validPlacement(grid, piece.shapes[UP], 0, 9));
+  TEST_ASSERT_FALSE(validPlacement(grid, piece.shapes[UP], 20, 0));
+  TEST_ASSERT_FALSE(validPlacement(grid, piece.shapes[UP], 18, 9));
 }
 
 int main(int argc, char** argv) {

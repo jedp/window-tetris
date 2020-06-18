@@ -25,12 +25,12 @@ void getFullRowsRange(const char *board, int &start, int &end) {
   end = _end;
 }
 
-bool validPlacement(const char *board, int rows, int cols, shape_t shape, int row, int col) {
+bool validPlacement(shape_t board, shape_t shape, int row, int col) {
   // Bounds check.
   if (row - shape.bbox.top < 0) return false;
-  if (row > rows - shape.bbox.bottom) return false;
+  if (row > board.rows - shape.bbox.bottom) return false;
   if (col - shape.bbox.left < 0) return false;
-  if (col > cols - shape.bbox.right) return false;
+  if (col > board.cols - shape.bbox.right) return false;
   return true;
 }
 

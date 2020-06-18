@@ -23,13 +23,6 @@ typedef enum {
   Z,
 } piece_name_t;
 
-typedef struct shape_t {
-  uint8_t rows;
-  uint8_t cols;
-  coords_t bbox;
-  const char *grid;
-} shape_t;
-
 typedef struct piece_t {
   uint8_t rows;
   uint8_t cols;

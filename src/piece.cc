@@ -1,5 +1,6 @@
 #include <stdbool.h>
 #include <stdint.h>
+#include "geom.h"
 #include "piece.h"
 
 orientation_t rotateClockwise(orientation_t from) {
@@ -16,14 +17,7 @@ void generateFromShapes(const char **shapes, int rows, int cols, piece_t &piece)
 
   for (uint8_t orientation = UP; orientation <= LEFT; ++orientation) {
     shape_t shape;
-    coords_t bbox;
-    shape.rows = rows;
-    shape.cols = cols;
-    shape.grid = shapes[orientation];
-
-    boundingBox(shape.grid, rows, cols, bbox);
-    shape.bbox = bbox;
-
+    shapeFromChars(shapes[orientation], rows, cols, shape);
     piece.shapes[orientation] = shape;
   }
 }

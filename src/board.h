@@ -28,5 +28,5 @@ void getFullRowsRange(const char *board, int &start, int &end);
  *
  * Row and col may be negative.
  */
-bool validPlacement(const char *board, int rows, int cols, shape_t shape, int row, int col);
+bool validPlacement(shape_t board, shape_t shape, int row, int col);
 

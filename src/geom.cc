@@ -61,3 +61,13 @@ void boundingBox(const char *grid, int rows, int cols, coords_t &coords) {
   coords.right = _right;
 }
 
+void shapeFromChars(const char *grid, int rows, int cols, shape_t &shape) {
+  coords_t bbox;
+  shape.rows = rows;
+  shape.cols = cols;
+  shape.grid = grid;
+
+  boundingBox(shape.grid, rows, cols, bbox);
+  shape.bbox = bbox;
+}
+
