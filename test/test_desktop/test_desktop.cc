@@ -221,7 +221,7 @@ void test_generate_shapes(void) {
   TEST_ASSERT_EQUAL(0, piece.shapes[LEFT].bbox.left);
 }
 
-void test_valid_placement(void) {
+void test_in_bounds(void) {
   const char *shapes_J[] = {
     [UP] =    "J   JJJ         ",
     [RIGHT] = " JJ  J   J      ",
@@ -236,15 +236,15 @@ void test_valid_placement(void) {
   shape_t grid;
   shapeFromChars(board_empty_grid, 20, 10, grid);
 
-  TEST_ASSERT_TRUE(validPlacement(grid, piece.shapes[UP], 0, 0));
-  TEST_ASSERT_TRUE(validPlacement(grid, piece.shapes[UP], 0, 8));
-  TEST_ASSERT_TRUE(validPlacement(grid, piece.shapes[UP], 19, 0));
-  TEST_ASSERT_TRUE(validPlacement(grid, piece.shapes[UP], 19, 8));
+  TEST_ASSERT_TRUE(inBounds(grid, piece.shapes[UP], 0, 0));
+  TEST_ASSERT_TRUE(inBounds(grid, piece.shapes[UP], 0, 8));
+  TEST_ASSERT_TRUE(inBounds(grid, piece.shapes[UP], 19, 0));
+  TEST_ASSERT_TRUE(inBounds(grid, piece.shapes[UP], 19, 8));
 
-  TEST_ASSERT_FALSE(validPlacement(grid, piece.shapes[UP], -1, 0));
-  TEST_ASSERT_FALSE(validPlacement(grid, piece.shapes[UP], 0, 9));
-  TEST_ASSERT_FALSE(validPlacement(grid, piece.shapes[UP], 20, 0));
-  TEST_ASSERT_FALSE(validPlacement(grid, piece.shapes[UP], 18, 9));
+  TEST_ASSERT_FALSE(inBounds(grid, piece.shapes[UP], -1, 0));
+  TEST_ASSERT_FALSE(inBounds(grid, piece.shapes[UP], 0, 9));
+  TEST_ASSERT_FALSE(inBounds(grid, piece.shapes[UP], 20, 0));
+  TEST_ASSERT_FALSE(inBounds(grid, piece.shapes[UP], 18, 9));
 }
 
 void test_collide(void) {
@@ -325,7 +325,7 @@ int main(int argc, char** argv) {
   RUN_TEST(test_bounding_box);
 
   RUN_TEST(test_generate_shapes);
-  RUN_TEST(test_valid_placement);
+  RUN_TEST(test_in_bounds);
   RUN_TEST(test_collide);
   RUN_TEST(test_stick);
 

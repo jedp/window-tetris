@@ -28,7 +28,7 @@ void getFullRowsRange(const char *board, int &start, int &end);
  *
  * Row and col may be negative.
  */
-bool validPlacement(shape_t board, shape_t shape, int row, int col);
+bool inBounds(shape_t board, shape_t shape, int row, int col);
 
 /**
  * Return true if any of the tiles in shape collide with tiles on the board
