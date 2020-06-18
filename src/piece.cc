@@ -10,54 +10,21 @@ orientation_t rotateAntiClockwise(orientation_t from) {
   return orientation_t((from + 3) % 4);
 }
 
-// Reference for pieces: https://tetris.fandom.com/wiki/Orientation
+void generateFromShapes(const char **shapes, int rows, int cols, piece_t &piece) {
+  piece.rows = rows;
+  piece.cols = cols;
 
-const char *PIECE_I[] = {
-  [UP] =    "    IIII        ",
-  [RIGHT] = "  I   I   I   I ",
-  [DOWN] =  "        IIII    ",
-  [LEFT] =  " I   I   I   I  "
-};
+  for (uint8_t orientation = UP; orientation <= LEFT; ++orientation) {
+    shape_t shape;
+    coords_t bbox;
+    shape.rows = rows;
+    shape.cols = cols;
+    shape.grid = shapes[orientation];
 
-const char *PIECE_J[] = {
-  [UP] =    "J   JJJ         ",
-  [RIGHT] = " JJ  J   J      ",
-  [DOWN] =  "    JJJ   J     ",
-  [LEFT] =  " J   J  JJ      "
-};
+    boundingBox(shape.grid, rows, cols, bbox);
+    shape.bbox = bbox;
 
-const char *PIECE_L[] = {
-  [UP] =    "  L LLL         ",
-  [RIGHT] = " L   L   LL     ",
-  [DOWN] =  "    LLL L       ",
-  [LEFT] =  "LL   L   L      "
-};
-
-const char *PIECE_O[] = {
-  [UP] =    "     OO  OO     ",
-  [RIGHT] = "     OO  OO     ",
-  [DOWN] =  "     OO  OO     ",
-  [LEFT] =  "     OO  OO     "
-};
-
-const char *PIECE_S[] = {
-  [UP] =    " SS SS          ",
-  [RIGHT] = " S   SS   S     ",
-  [DOWN] =  "     SS SS      ",
-  [LEFT] =  "S   SS   S      ",
-};
-
-const char *PIECE_T[] = {
-  [UP] =    " T  TTT         ",
-  [RIGHT] = "T   TT  T       ",
-  [DOWN] =  "    TTT  T      ",
-  [LEFT] =  " T  TT   T      "
-};
-
-const char *PIECE_Z[] = {
-  [UP] =    "ZZ   ZZ         ",
-  [RIGHT] = "  Z  ZZ  Z      ",
-  [DOWN] =  "    ZZ   ZZ     ",
-  [LEFT] =  " Z  ZZ  Z       "
-};
+    piece.shapes[orientation] = shape;
+  }
+}
 

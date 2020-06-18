@@ -1,7 +1,31 @@
 #include <board.h>
 #include <piece.h>
 #include <geom.h>
+#include <game.h>
+#include <constants.h>
 #include <unity.h>
+
+const char *board_empty =
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          ";
 
 const char *board0 =
   "          "
@@ -152,6 +176,42 @@ void test_bounding_box(void) {
   TEST_ASSERT_EQUAL(4, coords.right);
 }
 
+void test_generate_shapes(void) {
+  const char *shapes_J[] = {
+    [UP] =    "J   JJJ         ",
+    [RIGHT] = " JJ  J   J      ",
+    [DOWN] =  "    JJJ   J     ",
+    [LEFT] =  " J   J  JJ      "
+  };
+  int rows = 4;
+  int cols = 4;
+  piece_t piece;
+  generateFromShapes(shapes_J, rows, cols, piece);
+
+  TEST_ASSERT_EQUAL(4, piece.rows);
+  TEST_ASSERT_EQUAL(4, piece.cols);
+
+  TEST_ASSERT_EQUAL(0, piece.shapes[UP].bbox.top);
+  TEST_ASSERT_EQUAL(2, piece.shapes[UP].bbox.right);
+  TEST_ASSERT_EQUAL(1, piece.shapes[UP].bbox.bottom);
+  TEST_ASSERT_EQUAL(0, piece.shapes[UP].bbox.left);
+
+  TEST_ASSERT_EQUAL(0, piece.shapes[RIGHT].bbox.top);
+  TEST_ASSERT_EQUAL(2, piece.shapes[RIGHT].bbox.right);
+  TEST_ASSERT_EQUAL(2, piece.shapes[RIGHT].bbox.bottom);
+  TEST_ASSERT_EQUAL(1, piece.shapes[RIGHT].bbox.left);
+
+  TEST_ASSERT_EQUAL(1, piece.shapes[DOWN].bbox.top);
+  TEST_ASSERT_EQUAL(2, piece.shapes[DOWN].bbox.right);
+  TEST_ASSERT_EQUAL(2, piece.shapes[DOWN].bbox.bottom);
+  TEST_ASSERT_EQUAL(0, piece.shapes[DOWN].bbox.left);
+
+  TEST_ASSERT_EQUAL(0, piece.shapes[LEFT].bbox.top);
+  TEST_ASSERT_EQUAL(1, piece.shapes[LEFT].bbox.right);
+  TEST_ASSERT_EQUAL(2, piece.shapes[LEFT].bbox.bottom);
+  TEST_ASSERT_EQUAL(0, piece.shapes[LEFT].bbox.left);
+}
+
 int main(int argc, char** argv) {
   UNITY_BEGIN();
 
@@ -165,6 +225,8 @@ int main(int argc, char** argv) {
   RUN_TEST(test_col_empty);
   RUN_TEST(test_bounding_box_empty_grid);
   RUN_TEST(test_bounding_box);
+
+  RUN_TEST(test_generate_shapes);
 
   UNITY_END();
 }
