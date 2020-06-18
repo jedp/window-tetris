@@ -191,25 +191,56 @@ void test_generate_shapes(void) {
   TEST_ASSERT_EQUAL(4, piece.rows);
   TEST_ASSERT_EQUAL(4, piece.cols);
 
+  TEST_ASSERT_EQUAL(4, piece.shapes[UP].rows);
+  TEST_ASSERT_EQUAL(4, piece.shapes[UP].cols);
   TEST_ASSERT_EQUAL(0, piece.shapes[UP].bbox.top);
   TEST_ASSERT_EQUAL(2, piece.shapes[UP].bbox.right);
   TEST_ASSERT_EQUAL(1, piece.shapes[UP].bbox.bottom);
   TEST_ASSERT_EQUAL(0, piece.shapes[UP].bbox.left);
 
+  TEST_ASSERT_EQUAL(4, piece.shapes[RIGHT].rows);
+  TEST_ASSERT_EQUAL(4, piece.shapes[RIGHT].cols);
   TEST_ASSERT_EQUAL(0, piece.shapes[RIGHT].bbox.top);
   TEST_ASSERT_EQUAL(2, piece.shapes[RIGHT].bbox.right);
   TEST_ASSERT_EQUAL(2, piece.shapes[RIGHT].bbox.bottom);
   TEST_ASSERT_EQUAL(1, piece.shapes[RIGHT].bbox.left);
 
+  TEST_ASSERT_EQUAL(4, piece.shapes[DOWN].rows);
+  TEST_ASSERT_EQUAL(4, piece.shapes[DOWN].cols);
   TEST_ASSERT_EQUAL(1, piece.shapes[DOWN].bbox.top);
   TEST_ASSERT_EQUAL(2, piece.shapes[DOWN].bbox.right);
   TEST_ASSERT_EQUAL(2, piece.shapes[DOWN].bbox.bottom);
   TEST_ASSERT_EQUAL(0, piece.shapes[DOWN].bbox.left);
 
+  TEST_ASSERT_EQUAL(4, piece.shapes[LEFT].rows);
+  TEST_ASSERT_EQUAL(4, piece.shapes[LEFT].cols);
   TEST_ASSERT_EQUAL(0, piece.shapes[LEFT].bbox.top);
   TEST_ASSERT_EQUAL(1, piece.shapes[LEFT].bbox.right);
   TEST_ASSERT_EQUAL(2, piece.shapes[LEFT].bbox.bottom);
   TEST_ASSERT_EQUAL(0, piece.shapes[LEFT].bbox.left);
+}
+
+void test_valid_placement(void) {
+  const char *shapes_J[] = {
+    [UP] =    "J   JJJ         ",
+    [RIGHT] = " JJ  J   J      ",
+    [DOWN] =  "    JJJ   J     ",
+    [LEFT] =  " J   J  JJ      "
+  };
+  int rows = 4;
+  int cols = 4;
+  piece_t piece;
+  generateFromShapes(shapes_J, rows, cols, piece);
+
+  TEST_ASSERT_TRUE(validPlacement(board_empty, 20, 10, piece.shapes[UP], 0, 0));
+  TEST_ASSERT_TRUE(validPlacement(board_empty, 20, 10, piece.shapes[UP], 0, 8));
+  TEST_ASSERT_TRUE(validPlacement(board_empty, 20, 10, piece.shapes[UP], 19, 0));
+  TEST_ASSERT_TRUE(validPlacement(board_empty, 20, 10, piece.shapes[UP], 19, 8));
+
+  TEST_ASSERT_FALSE(validPlacement(board_empty, 20, 10, piece.shapes[UP], -1, 0));
+  TEST_ASSERT_FALSE(validPlacement(board_empty, 20, 10, piece.shapes[UP], 0, 9));
+  TEST_ASSERT_FALSE(validPlacement(board_empty, 20, 10, piece.shapes[UP], 20, 0));
+  TEST_ASSERT_FALSE(validPlacement(board_empty, 20, 10, piece.shapes[UP], 18, 9));
 }
 
 int main(int argc, char** argv) {
@@ -227,6 +258,7 @@ int main(int argc, char** argv) {
   RUN_TEST(test_bounding_box);
 
   RUN_TEST(test_generate_shapes);
+  RUN_TEST(test_valid_placement);
 
   UNITY_END();
 }

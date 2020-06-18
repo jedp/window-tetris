@@ -1,5 +1,7 @@
 #pragma once
 
+#import "piece.h"
+
 /**
  * Return true if the range of characters from start to end (exclusive)
  * contains no empty spaces.
@@ -26,5 +28,5 @@ void getFullRowsRange(const char *board, int &start, int &end);
  *
  * Row and col may be negative.
  */
-bool validPlacement(const char *board, const char *piece, int row, int col);
+bool validPlacement(const char *board, int rows, int cols, shape_t shape, int row, int col);
 
