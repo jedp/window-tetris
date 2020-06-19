@@ -148,33 +148,33 @@ void test_rotate_anticlockwise(void) {
 }
 
 void test_bounding_box_empty_grid(void) {
-  coords_t coords;
+  bbox_t bbox;
   int rows = 3;
   int cols = 4;
   const char *grid = "    "
                      "    "
                      "    ";
-  boundingBox(grid, rows, cols, coords);
+  boundingBox(grid, rows, cols, bbox);
   // An empty thing has a zero-size bounding box.
-  TEST_ASSERT_EQUAL(0, coords.top);
-  TEST_ASSERT_EQUAL(0, coords.left);
-  TEST_ASSERT_EQUAL(0, coords.bottom);
-  TEST_ASSERT_EQUAL(0, coords.right);
+  TEST_ASSERT_EQUAL(0, bbox.uLeft.row);
+  TEST_ASSERT_EQUAL(0, bbox.uLeft.col);
+  TEST_ASSERT_EQUAL(0, bbox.lRight.row);
+  TEST_ASSERT_EQUAL(0, bbox.lRight.col);
 }
 
 void test_bounding_box(void) {
-  coords_t coords;
+  bbox_t bbox;
   int rows = 4;
   int cols = 5;
   const char *grid = "     "
                      " xxx "
                      "  xxx"
                      "     ";
-  boundingBox(grid, rows, cols, coords);
-  TEST_ASSERT_EQUAL(1, coords.top);
-  TEST_ASSERT_EQUAL(1, coords.left);
-  TEST_ASSERT_EQUAL(2, coords.bottom);
-  TEST_ASSERT_EQUAL(4, coords.right);
+  boundingBox(grid, rows, cols, bbox);
+  TEST_ASSERT_EQUAL(1, bbox.uLeft.row);
+  TEST_ASSERT_EQUAL(1, bbox.uLeft.col);
+  TEST_ASSERT_EQUAL(2, bbox.lRight.row);
+  TEST_ASSERT_EQUAL(4, bbox.lRight.col);
 }
 
 void test_generate_shapes(void) {
@@ -194,31 +194,31 @@ void test_generate_shapes(void) {
 
   TEST_ASSERT_EQUAL(4, piece.shapes[UP].rows);
   TEST_ASSERT_EQUAL(4, piece.shapes[UP].cols);
-  TEST_ASSERT_EQUAL(0, piece.shapes[UP].bbox.top);
-  TEST_ASSERT_EQUAL(2, piece.shapes[UP].bbox.right);
-  TEST_ASSERT_EQUAL(1, piece.shapes[UP].bbox.bottom);
-  TEST_ASSERT_EQUAL(0, piece.shapes[UP].bbox.left);
+  TEST_ASSERT_EQUAL(0, piece.shapes[UP].bbox.uLeft.row);
+  TEST_ASSERT_EQUAL(2, piece.shapes[UP].bbox.lRight.col);
+  TEST_ASSERT_EQUAL(1, piece.shapes[UP].bbox.lRight.row);
+  TEST_ASSERT_EQUAL(0, piece.shapes[UP].bbox.uLeft.col);
 
   TEST_ASSERT_EQUAL(4, piece.shapes[RIGHT].rows);
   TEST_ASSERT_EQUAL(4, piece.shapes[RIGHT].cols);
-  TEST_ASSERT_EQUAL(0, piece.shapes[RIGHT].bbox.top);
-  TEST_ASSERT_EQUAL(2, piece.shapes[RIGHT].bbox.right);
-  TEST_ASSERT_EQUAL(2, piece.shapes[RIGHT].bbox.bottom);
-  TEST_ASSERT_EQUAL(1, piece.shapes[RIGHT].bbox.left);
+  TEST_ASSERT_EQUAL(0, piece.shapes[RIGHT].bbox.uLeft.row);
+  TEST_ASSERT_EQUAL(2, piece.shapes[RIGHT].bbox.lRight.col);
+  TEST_ASSERT_EQUAL(2, piece.shapes[RIGHT].bbox.lRight.row);
+  TEST_ASSERT_EQUAL(1, piece.shapes[RIGHT].bbox.uLeft.col);
 
   TEST_ASSERT_EQUAL(4, piece.shapes[DOWN].rows);
   TEST_ASSERT_EQUAL(4, piece.shapes[DOWN].cols);
-  TEST_ASSERT_EQUAL(1, piece.shapes[DOWN].bbox.top);
-  TEST_ASSERT_EQUAL(2, piece.shapes[DOWN].bbox.right);
-  TEST_ASSERT_EQUAL(2, piece.shapes[DOWN].bbox.bottom);
-  TEST_ASSERT_EQUAL(0, piece.shapes[DOWN].bbox.left);
+  TEST_ASSERT_EQUAL(1, piece.shapes[DOWN].bbox.uLeft.row);
+  TEST_ASSERT_EQUAL(2, piece.shapes[DOWN].bbox.lRight.col);
+  TEST_ASSERT_EQUAL(2, piece.shapes[DOWN].bbox.lRight.row);
+  TEST_ASSERT_EQUAL(0, piece.shapes[DOWN].bbox.uLeft.col);
 
   TEST_ASSERT_EQUAL(4, piece.shapes[LEFT].rows);
   TEST_ASSERT_EQUAL(4, piece.shapes[LEFT].cols);
-  TEST_ASSERT_EQUAL(0, piece.shapes[LEFT].bbox.top);
-  TEST_ASSERT_EQUAL(1, piece.shapes[LEFT].bbox.right);
-  TEST_ASSERT_EQUAL(2, piece.shapes[LEFT].bbox.bottom);
-  TEST_ASSERT_EQUAL(0, piece.shapes[LEFT].bbox.left);
+  TEST_ASSERT_EQUAL(0, piece.shapes[LEFT].bbox.uLeft.row);
+  TEST_ASSERT_EQUAL(1, piece.shapes[LEFT].bbox.lRight.col);
+  TEST_ASSERT_EQUAL(2, piece.shapes[LEFT].bbox.lRight.row);
+  TEST_ASSERT_EQUAL(0, piece.shapes[LEFT].bbox.uLeft.col);
 }
 
 void test_in_bounds(void) {
@@ -236,15 +236,15 @@ void test_in_bounds(void) {
   shape_t grid;
   shapeFromChars(board_empty_grid, 20, 10, grid);
 
-  TEST_ASSERT_TRUE(inBounds(grid, piece.shapes[UP], 0, 0));
-  TEST_ASSERT_TRUE(inBounds(grid, piece.shapes[UP], 0, 8));
-  TEST_ASSERT_TRUE(inBounds(grid, piece.shapes[UP], 19, 0));
-  TEST_ASSERT_TRUE(inBounds(grid, piece.shapes[UP], 19, 8));
+  TEST_ASSERT_TRUE(inBounds(grid, piece.shapes[UP], (struct point) { 0, 0 }));
+  TEST_ASSERT_TRUE(inBounds(grid, piece.shapes[UP], (struct point) { 0, 8 }));
+  TEST_ASSERT_TRUE(inBounds(grid, piece.shapes[UP], (struct point) { 19, 0 }));
+  TEST_ASSERT_TRUE(inBounds(grid, piece.shapes[UP], (struct point) { 19, 8 }));
 
-  TEST_ASSERT_FALSE(inBounds(grid, piece.shapes[UP], -1, 0));
-  TEST_ASSERT_FALSE(inBounds(grid, piece.shapes[UP], 0, 9));
-  TEST_ASSERT_FALSE(inBounds(grid, piece.shapes[UP], 20, 0));
-  TEST_ASSERT_FALSE(inBounds(grid, piece.shapes[UP], 18, 9));
+  TEST_ASSERT_FALSE(inBounds(grid, piece.shapes[UP], (struct point) { -1, 0 }));
+  TEST_ASSERT_FALSE(inBounds(grid, piece.shapes[UP], (struct point) { 0, 9 }));
+  TEST_ASSERT_FALSE(inBounds(grid, piece.shapes[UP], (struct point) { 20, 0 }));
+  TEST_ASSERT_FALSE(inBounds(grid, piece.shapes[UP], (struct point) { 18, 9 }));
 }
 
 void test_collide(void) {
@@ -262,24 +262,24 @@ void test_collide(void) {
   shapeFromChars(shape_chars, 2, 2, shape);
 
   // Valid, all-on-screen placement.
-  TEST_ASSERT_FALSE(collide(board, shape, 0, 0));
+  TEST_ASSERT_FALSE(collide(board, shape, (struct point) { 0, 0 }));
 
   // Part of the shape is off the screen. That's ok.
-  TEST_ASSERT_FALSE(collide(board, shape, 0, -1));
-  TEST_ASSERT_FALSE(collide(board, shape, -1, -1));
+  TEST_ASSERT_FALSE(collide(board, shape, (struct point) { 0, -1 }));
+  TEST_ASSERT_FALSE(collide(board, shape, (struct point) { -1, -1 }));
 
   // Bottom tip overlaps.
-  TEST_ASSERT_TRUE(collide(board, shape, 2, 0));
+  TEST_ASSERT_TRUE(collide(board, shape, (struct point) { 2, 0 }));
 
   // Top overlaps.
-  TEST_ASSERT_TRUE(collide(board, shape, 3, 1));
+  TEST_ASSERT_TRUE(collide(board, shape, (struct point) { 3, 1 }));
 
   // Top and bottom overlap.
-  TEST_ASSERT_TRUE(collide(board, shape, 4, -1));
-  TEST_ASSERT_TRUE(collide(board, shape, 4, 0));
+  TEST_ASSERT_TRUE(collide(board, shape, (struct point) { 4, -1 }));
+  TEST_ASSERT_TRUE(collide(board, shape, (struct point) { 4, 0 }));
 
   // Hidden under the lip of the thing.
-  TEST_ASSERT_FALSE(collide(board, shape, 4, 1));
+  TEST_ASSERT_FALSE(collide(board, shape, (struct point) { 4, 1 }));
 }
 
 void test_stick(void) {
@@ -296,7 +296,7 @@ void test_stick(void) {
   shapeFromChars(board_chars, 6, 4, board);
   shapeFromChars(shape_chars, 2, 2, shape);
 
-  stick(board, shape, 4, 1);
+  stick(board, shape, (struct point) { 4, 1 });
 
   // This is what it looks like after sticking.
   const char *stuck_chars = "    "

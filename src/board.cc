@@ -25,30 +25,30 @@ void getFullRowsRange(const char *board, int &start, int &end) {
   end = _end;
 }
 
-bool inBounds(shape_t board, shape_t shape, int row, int col) {
-  if (row - shape.bbox.top < 0) return false;
-  if (row > board.rows - shape.bbox.bottom) return false;
-  if (col - shape.bbox.left < 0) return false;
-  if (col > board.cols - shape.bbox.right) return false;
+bool inBounds(shape_t board, shape_t shape, point_t dst) {
+  if (dst.row - shape.bbox.uLeft.row < 0) return false;
+  if (dst.row > board.rows - shape.bbox.lRight.row) return false;
+  if (dst.col - shape.bbox.uLeft.col < 0) return false;
+  if (dst.col > board.cols - shape.bbox.lRight.col) return false;
 
   return true;
 }
 
-bool collide(shape_t board, shape_t shape, int row, int col) {
-  if (row >= board.rows) return false;
-  if (col >= board.cols) return false;
+bool collide(shape_t board, shape_t shape, point_t dst) {
+  if (dst.row >= board.rows) return false;
+  if (dst.col >= board.cols) return false;
 
-  for (int i = row; i < (int)board.rows && i < (int)shape.rows + row; ++i) {
+  for (int i = dst.row; i < (int)board.rows && i < (int)shape.rows + dst.row; ++i) {
     // We don't have off-screen collisions.
     if (i < 0) continue;
 
-    for (int j = col; j < (int)board.cols && j < (int)shape.cols + col; ++j) {
+    for (int j = dst.col; j < (int)board.cols && j < (int)shape.cols + dst.col; ++j) {
       // We don't have off-screen collisions.
       if (j < 0) continue;
 
       // i and j are in grid space.
       // Offset to get the local coordinate in the shape.
-      if (shape.grid[(i - row) * shape.cols + (j - col)] != ' '
+      if (shape.grid[(i - dst.row) * shape.cols + (j - dst.col)] != ' '
           && board.grid[i * board.cols + j] != ' ') {
         return true;
       }
@@ -57,18 +57,18 @@ bool collide(shape_t board, shape_t shape, int row, int col) {
   return false;
 }
 
-void stick(shape_t board, shape_t shape, int row, int col) {
-  for (int i = row; i < (int)board.rows && i < (int)shape.rows + row; ++i) {
+void stick(shape_t board, shape_t shape, point_t dst) {
+  for (int i = dst.row; i < (int)board.rows && i < (int)shape.rows + dst.row; ++i) {
     // We don't have off-screen geometry.
     if (i < 0) continue;
 
-    for (int j = col; j < (int)board.cols && j < (int)shape.cols + col; ++j) {
+    for (int j = dst.col; j < (int)board.cols && j < (int)shape.cols + dst.col; ++j) {
       // We don't have off-screen geometry.
       if (j < 0) continue;
 
       // i and j are in grid space.
       // Offset to get the local coordinate in the shape.
-      char cell = shape.grid[(i - row) * shape.cols + (j - col)];
+      char cell = shape.grid[(i - dst.row) * shape.cols + (j - dst.col)];
       if (cell != ' ') {
         board.grid[i * board.cols + j] = cell;
       }

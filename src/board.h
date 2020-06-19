@@ -21,23 +21,23 @@ void getFullRowsRange(const char *board, int &start, int &end);
 
 /**
  * Returns true if the given piece can be placed on the board at the given
- * row and col.
+ * point.
  *
  * Placement is invalid if any non-empty parts of the piece are off the board,
  * or overlap with a non-empty space on the board.
  *
  * Row and col may be negative.
  */
-bool inBounds(shape_t board, shape_t shape, int row, int col);
+bool inBounds(shape_t board, shape_t shape, point_t dst);
 
 /**
  * Return true if any of the tiles in shape collide with tiles on the board
- * when shape is move to row, col.
+ * when shape is moved to the given point.
  */
-bool collide(shape_t board, shape_t shape, int row, int col);
+bool collide(shape_t board, shape_t shape, point_t dst);
 
 /**
- * Stick the shape to the board at the given row and column.
+ * Stick the shape to the board at the given point.
  */
-void stick(shape_t board, shape_t shape, int row, int col);
+void stick(shape_t board, shape_t shape, point_t dst);
 

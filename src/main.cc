@@ -1,3 +1,5 @@
+#ifndef UNIT_TEST
+
 #include "Arduino.h"
 #include "Adafruit_NeoPixel.h"
 #include "game.h"
@@ -16,3 +18,4 @@ void setup() {
 void loop() {
 }
 
+#endif

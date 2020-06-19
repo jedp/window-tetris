@@ -21,7 +21,7 @@ bool colEmpty(const char *grid, int rows, int cols, int col) {
   return true;
 }
 
-void boundingBox(const char *grid, int rows, int cols, coords_t &coords) {
+void boundingBox(const char *grid, int rows, int cols, bbox_t &bbox) {
   uint8_t _top = 0;
   uint8_t _left = 0;
   uint8_t _bottom = 0;
@@ -55,14 +55,14 @@ void boundingBox(const char *grid, int rows, int cols, coords_t &coords) {
     }
   }
 
-  coords.top = _top;
-  coords.left = _left;
-  coords.bottom = _bottom;
-  coords.right = _right;
+  bbox.uLeft.row = _top;
+  bbox.uLeft.col = _left;
+  bbox.lRight.row = _bottom;
+  bbox.lRight.col = _right;
 }
 
 void shapeFromChars(const char *grid, int rows, int cols, shape_t &shape) {
-  coords_t bbox;
+  bbox_t bbox;
   shape.rows = rows;
   shape.cols = cols;
   shape.grid = new char[rows * cols]();

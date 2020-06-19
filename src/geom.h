@@ -3,21 +3,28 @@
 #include <stdint.h>
 
 /**
- * Container for coordinates.
- *
- * Top and left are (0, 0). Bottom and right are not less than top and left.
+ * A point designted by a row and a column.
  */
-typedef struct coords {
-  uint8_t top;
-  uint8_t left;
-  uint8_t bottom;
-  uint8_t right;
-} coords_t;
+typedef struct point {
+  int row;
+  int col;
+} point_t;
 
+/**
+ * Container for bounding box.
+ */
+typedef struct bbox {
+  point_t uLeft;
+  point_t lRight;
+} bbox_t;
+
+/**
+ * Data class for a shape.
+ */
 typedef struct shape_t {
   uint8_t rows;
   uint8_t cols;
-  coords_t bbox;
+  bbox_t bbox;
   char *grid; // Mutable
 } shape_t;
 
@@ -38,7 +45,7 @@ bool colEmpty(const char *grid, int rows, int cols, int col);
  * The coordinates are inclusive, so a full 4x4 shape will have bounds of
  * (0, 0) to (3, 3).
  */
-void boundingBox(const char *grid, int rows, int cols, coords_t &coords);
+void boundingBox(const char *grid, int rows, int cols, bbox_t &bbox);
 
 /**
  * Convert the given char grid of rows by cols to a shape_t.
