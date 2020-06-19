@@ -1,8 +1,28 @@
 #include <sequence.h>
 
+#ifdef ARDUINO
+#include "Arduino.h"
+#endif
+
 void swap(piece_name_t *seq, int i, int j);
 
-Sequence::Sequence(int seed) {
+Random::Random(long seed) {
+  this->seed = seed;
+
+#ifdef ARDUINO
+  randomSeed(seed);
+#endif
+}
+
+long Random::choice(long from, long to) {
+#ifdef ARDUINO
+  return random(from, to);
+#else
+  return from;
+#endif
+}
+
+Sequence::Sequence(long seed) :random(seed) {
   reshuffle();
 }
 
@@ -20,9 +40,9 @@ void Sequence::reshuffle() {
   reset();
 
   // No-op; Swaps them back to their original order.
-  piece_name_t temp[NUM_PIECES];
   for (uint8_t i = 0; i < NUM_PIECES; ++i) {
-    swap(seq, i, NUM_PIECES - i);
+    uint8_t k = random.choice(i, NUM_PIECES);
+    swap(seq, k, NUM_PIECES - k);
   }
 }
 
