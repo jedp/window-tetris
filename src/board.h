@@ -26,18 +26,22 @@ void getFullRowsRange(const char *board, int &start, int &end);
  * Placement is invalid if any non-empty parts of the piece are off the board,
  * or overlap with a non-empty space on the board.
  *
- * Row and col may be negative.
+ * The destination point is in board space. It may have negative coordinates.
  */
 bool inBounds(shape_t board, shape_t shape, point_t dst);
 
 /**
  * Return true if any of the tiles in shape collide with tiles on the board
  * when shape is moved to the given point.
+ *
+ * The destination point is in board space.
  */
 bool collide(shape_t board, shape_t shape, point_t dst);
 
 /**
  * Stick the shape to the board at the given point.
+ *
+ * The destination point is in board space.
  */
 void stick(shape_t board, shape_t shape, point_t dst);
 
