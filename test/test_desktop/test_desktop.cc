@@ -3,6 +3,7 @@
 #include <geom.h>
 #include <game.h>
 #include <constants.h>
+#include <sequence.h>
 #include <unity.h>
 #include <iostream>
 
@@ -310,6 +311,28 @@ void test_stick(void) {
   TEST_ASSERT_TRUE(shapesEqual(board, expected));
 }
 
+void test_sequence(void) {
+  Sequence sequence = Sequence(0);
+
+  // Sequence is deterministic in tests.
+  TEST_ASSERT_EQUAL(I, sequence.next());
+  TEST_ASSERT_EQUAL(J, sequence.next());
+  TEST_ASSERT_EQUAL(L, sequence.next());
+  TEST_ASSERT_EQUAL(O, sequence.next());
+  TEST_ASSERT_EQUAL(S, sequence.next());
+  TEST_ASSERT_EQUAL(T, sequence.next());
+  TEST_ASSERT_EQUAL(Z, sequence.next());
+
+  // It resets and starts again.
+  TEST_ASSERT_EQUAL(I, sequence.next());
+  TEST_ASSERT_EQUAL(J, sequence.next());
+  TEST_ASSERT_EQUAL(L, sequence.next());
+  TEST_ASSERT_EQUAL(O, sequence.next());
+  TEST_ASSERT_EQUAL(S, sequence.next());
+  TEST_ASSERT_EQUAL(T, sequence.next());
+  TEST_ASSERT_EQUAL(Z, sequence.next());
+}
+
 int main(int argc, char** argv) {
   UNITY_BEGIN();
 
@@ -328,6 +351,8 @@ int main(int argc, char** argv) {
   RUN_TEST(test_in_bounds);
   RUN_TEST(test_collide);
   RUN_TEST(test_stick);
+
+  RUN_TEST(test_sequence);
 
   UNITY_END();
 }

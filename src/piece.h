@@ -13,7 +13,7 @@ typedef enum {
 /**
  * The names of the seven tiles.
  */
-typedef enum {
+typedef enum PieceName {
   I,
   J,
   L,
@@ -21,6 +21,7 @@ typedef enum {
   S,
   T,
   Z,
+  NUM_PIECES,
 } piece_name_t;
 
 typedef struct piece_t {
