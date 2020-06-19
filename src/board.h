@@ -1,6 +1,6 @@
 #pragma once
 
-#import "piece.h"
+#include "piece.h"
 
 /**
  * Return true if the range of characters from start to end (exclusive)

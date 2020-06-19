@@ -2,7 +2,6 @@
 #include "piece.h"
 #include "board.h"
 #include "game.h"
-#include <iostream>
 
 bool noEmptySpacesInRange(const char *grid, int start, int end) {
   for (uint8_t j = start; j < end; ++j) {
