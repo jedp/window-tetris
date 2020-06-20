@@ -52,34 +52,22 @@ const char *PIECE_Z[] = {
   [LEFT] =  " Z  ZZ  Z       "
 };
 
-void makeCanvas(shape_t &canvas) {
-  canvas.rows = H_BOARD;
-  canvas.cols = W_BOARD;
-  // Conventionally, our bbox for an "empty" shape is 0.
-  canvas.bbox = (struct bbox) {
-    (struct point) { 0, 0 },
-    (struct point) { 0, 0 }
-  };
-  canvas.grid = new char[H_BOARD * W_BOARD]();
-
-  // Fill each cell with the default, empty value.
-  for (uint8_t i = 0; i < H_BOARD * W_BOARD; ++i) {
-    canvas.grid[i] = EMPTY_SPACE;
-  }
+void makeCanvas(Shape &canvas) {
+  canvas.setWithChar(EMPTY_SPACE, H_BOARD, W_BOARD);
 }
 
-Game::Game(const shape_t &canvas, const Sequence &sequence)
+Game::Game(const Shape &canvas, const Sequence &sequence)
   : canvas(canvas),
     sequence(sequence) {
 
   // Generate all shapes, which are constant and immutable.
-  generateFromShapes(PIECE_I, 4, 4, pieces[I]);
-  generateFromShapes(PIECE_J, 4, 4, pieces[J]);
-  generateFromShapes(PIECE_L, 4, 4, pieces[L]);
-  generateFromShapes(PIECE_O, 4, 4, pieces[O]);
-  generateFromShapes(PIECE_S, 4, 4, pieces[S]);
-  generateFromShapes(PIECE_T, 4, 4, pieces[T]);
-  generateFromShapes(PIECE_Z, 4, 4, pieces[Z]);
+  pieces[I].generateFromShapes(PIECE_I, 4, 4);
+  pieces[J].generateFromShapes(PIECE_J, 4, 4);
+  pieces[L].generateFromShapes(PIECE_L, 4, 4);
+  pieces[O].generateFromShapes(PIECE_O, 4, 4);
+  pieces[S].generateFromShapes(PIECE_S, 4, 4);
+  pieces[T].generateFromShapes(PIECE_T, 4, 4);
+  pieces[Z].generateFromShapes(PIECE_Z, 4, 4);
 
   // Create a new board. This will be re-used for all games.
   makeCanvas(board);
@@ -91,18 +79,19 @@ uint32_t Game::getScore() {
   return score;
 }
 
+void Game::produceNextPiece() {
+}
+
 void Game::render() {
-  // Write our data to the canvas.
-  for (uint8_t i = 0; i < H_BOARD * W_BOARD; ++i) {
-    canvas.grid[i] = board.grid[i];
-  }
-  updateBoundingBox(canvas);
+  canvas.setFromChars(board.getGrid(), board.getRows(), board.getCols());
+  canvas.updateBoundingBox();
 }
 
 void Game::reset() {
   score = 0;
 
-  fillShape(board, EMPTY_SPACE);
+  board.fillWith(EMPTY_SPACE);
+  canvas.fillWith(EMPTY_SPACE);
 
   render();
 }

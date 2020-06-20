@@ -24,15 +24,26 @@ typedef enum PieceName {
   NUM_PIECES,
 } piece_name_t;
 
-typedef struct piece_t {
-  uint8_t rows;
-  uint8_t cols;
-  shape_t shapes[4];
-} piece_t;
+class Piece {
+  public:
+    Piece();
+    void generateFromShapes(const char **shapes, int rows, int cols);
+    Shape getCurrentShape();
+    void setCoordinates(point_t coordinates);
+    point_t getCoordinates();
+    Shape shapeFacing(orientation_t orientation);
+    Shape shapeForClockwiseRotation();
+    Shape shapeForAntiClockwiseRotation();
+    void rotateClockwise();
+    void rotateAntiClockwise();
 
-orientation_t rotateClockwise(orientation_t from);
+  private:
+    point_t coordinates;
+    orientation_t orientation;
+    Shape shapes[4];
+};
 
-orientation_t rotateAntiClockwise(orientation_t from);
+orientation_t nextClockwiseOrientation(orientation_t from);
 
-void generateFromShapes(const char **shapes, int rows, int cols, piece_t &piece);
+orientation_t nextAntiClockwiseOrientation(orientation_t from);
 

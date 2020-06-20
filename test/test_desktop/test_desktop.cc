@@ -135,17 +135,17 @@ void test_col_empty(void) {
 }
 
 void test_rotate_clockwise(void) {
-  TEST_ASSERT_EQUAL(RIGHT, rotateClockwise(UP));
-  TEST_ASSERT_EQUAL(DOWN, rotateClockwise(RIGHT));
-  TEST_ASSERT_EQUAL(LEFT, rotateClockwise(DOWN));
-  TEST_ASSERT_EQUAL(UP, rotateClockwise(LEFT));
+  TEST_ASSERT_EQUAL(RIGHT, nextClockwiseOrientation(UP));
+  TEST_ASSERT_EQUAL(DOWN, nextClockwiseOrientation(RIGHT));
+  TEST_ASSERT_EQUAL(LEFT, nextClockwiseOrientation(DOWN));
+  TEST_ASSERT_EQUAL(UP, nextClockwiseOrientation(LEFT));
 }
 
 void test_rotate_anticlockwise(void) {
-  TEST_ASSERT_EQUAL(LEFT, rotateAntiClockwise(UP));
-  TEST_ASSERT_EQUAL(DOWN, rotateAntiClockwise(LEFT));
-  TEST_ASSERT_EQUAL(RIGHT, rotateAntiClockwise(DOWN));
-  TEST_ASSERT_EQUAL(UP, rotateAntiClockwise(RIGHT));
+  TEST_ASSERT_EQUAL(LEFT, nextAntiClockwiseOrientation(UP));
+  TEST_ASSERT_EQUAL(DOWN, nextAntiClockwiseOrientation(LEFT));
+  TEST_ASSERT_EQUAL(RIGHT, nextAntiClockwiseOrientation(DOWN));
+  TEST_ASSERT_EQUAL(UP, nextAntiClockwiseOrientation(RIGHT));
 }
 
 void test_bounding_box_empty_grid(void) {
@@ -179,38 +179,36 @@ void test_bounding_box(void) {
 }
 
 void test_update_bounding_box(void) {
-  shape_t shape;
+  Shape shape;
   const char *empty = "    "
                       "    "
                       "    ";
-  shapeFromChars(empty, 3, 4, shape);
-  TEST_ASSERT_EQUAL(0, shape.bbox.uLeft.row);
-  TEST_ASSERT_EQUAL(0, shape.bbox.uLeft.col);
-  TEST_ASSERT_EQUAL(0, shape.bbox.lRight.row);
-  TEST_ASSERT_EQUAL(0, shape.bbox.lRight.col);
+  shape.setFromChars(empty, 3, 4);
+  TEST_ASSERT_EQUAL(0, shape.getBBox().uLeft.row);
+  TEST_ASSERT_EQUAL(0, shape.getBBox().uLeft.col);
+  TEST_ASSERT_EQUAL(0, shape.getBBox().lRight.row);
+  TEST_ASSERT_EQUAL(0, shape.getBBox().lRight.col);
 
   // Put a shape inside.
-  shape.grid[5] = 'x';
-  shape.grid[6] = 'x';
-  updateBoundingBox(shape);
-  TEST_ASSERT_EQUAL(1, shape.bbox.uLeft.row);
-  TEST_ASSERT_EQUAL(1, shape.bbox.uLeft.col);
-  TEST_ASSERT_EQUAL(1, shape.bbox.lRight.row);
-  TEST_ASSERT_EQUAL(2, shape.bbox.lRight.col);
+  shape.setCharAt('x', (struct point) { 1, 1 });
+  shape.setCharAt('x', (struct point) { 1, 2 });
+  TEST_ASSERT_EQUAL(1, shape.getBBox().uLeft.row);
+  TEST_ASSERT_EQUAL(1, shape.getBBox().uLeft.col);
+  TEST_ASSERT_EQUAL(1, shape.getBBox().lRight.row);
+  TEST_ASSERT_EQUAL(2, shape.getBBox().lRight.col);
 
   // Remove the shape. It's empty again.
-  shape.grid[5] = ' ';
-  shape.grid[6] = ' ';
-  updateBoundingBox(shape);
-  TEST_ASSERT_EQUAL(0, shape.bbox.uLeft.row);
-  TEST_ASSERT_EQUAL(0, shape.bbox.uLeft.col);
-  TEST_ASSERT_EQUAL(0, shape.bbox.lRight.row);
-  TEST_ASSERT_EQUAL(0, shape.bbox.lRight.col);
+  shape.setCharAt(' ', (struct point) { 1, 1 });
+  shape.setCharAt(' ', (struct point) { 1, 2 });
+  TEST_ASSERT_EQUAL(0, shape.getBBox().uLeft.row);
+  TEST_ASSERT_EQUAL(0, shape.getBBox().uLeft.col);
+  TEST_ASSERT_EQUAL(0, shape.getBBox().lRight.row);
+  TEST_ASSERT_EQUAL(0, shape.getBBox().lRight.col);
 }
 
 void test_fill(void) {
-  shape_t shape;
-  shape_t fullShape;
+  Shape shape;
+  Shape fullShape;
   const char *empty = "    "
                       "    "
                       "    ";
@@ -218,27 +216,27 @@ void test_fill(void) {
                       "cccc"
                       "cccc";
 
-  shapeFromChars(empty, 3, 4, shape);
-  shapeFromChars(full, 3, 4, fullShape);
+  shape.setFromChars(empty, 3, 4);
+  fullShape.setFromChars(full, 3, 4);
 
   // Initially, the bbox is empty because the shape has no visible contents.
-  TEST_ASSERT_EQUAL(4, shape.cols);
-  TEST_ASSERT_EQUAL(3, shape.rows);
-  TEST_ASSERT_EQUAL(0, shape.bbox.uLeft.col);
-  TEST_ASSERT_EQUAL(0, shape.bbox.uLeft.row);
-  TEST_ASSERT_EQUAL(0, shape.bbox.lRight.col);
-  TEST_ASSERT_EQUAL(0, shape.bbox.lRight.row);
-  TEST_ASSERT_FALSE(shapesEqual(shape, fullShape));
+  TEST_ASSERT_EQUAL(4, shape.getCols());
+  TEST_ASSERT_EQUAL(3, shape.getRows());
+  TEST_ASSERT_EQUAL(0, shape.getBBox().uLeft.col);
+  TEST_ASSERT_EQUAL(0, shape.getBBox().uLeft.row);
+  TEST_ASSERT_EQUAL(0, shape.getBBox().lRight.col);
+  TEST_ASSERT_EQUAL(0, shape.getBBox().lRight.row);
+  TEST_ASSERT_FALSE(shape == fullShape);
 
-  fillShape(shape, 'c');
+  shape.fillWith('c');
   // After filling, the bbox is updated.
-  TEST_ASSERT_EQUAL(4, shape.cols);
-  TEST_ASSERT_EQUAL(3, shape.rows);
-  TEST_ASSERT_EQUAL(0, shape.bbox.uLeft.col);
-  TEST_ASSERT_EQUAL(0, shape.bbox.uLeft.row);
-  TEST_ASSERT_EQUAL(3, shape.bbox.lRight.col);
-  TEST_ASSERT_EQUAL(2, shape.bbox.lRight.row);
-  TEST_ASSERT_TRUE(shapesEqual(shape, fullShape));
+  TEST_ASSERT_EQUAL(4, shape.getCols());
+  TEST_ASSERT_EQUAL(3, shape.getRows());
+  TEST_ASSERT_EQUAL(0, shape.getBBox().uLeft.col);
+  TEST_ASSERT_EQUAL(0, shape.getBBox().uLeft.row);
+  TEST_ASSERT_EQUAL(3, shape.getBBox().lRight.col);
+  TEST_ASSERT_EQUAL(2, shape.getBBox().lRight.row);
+  TEST_ASSERT_TRUE(shape == fullShape);
 }
 
 void test_generate_shapes(void) {
@@ -250,39 +248,36 @@ void test_generate_shapes(void) {
   };
   int rows = 4;
   int cols = 4;
-  piece_t piece;
-  generateFromShapes(shapes_J, rows, cols, piece);
+  Piece piece;
+  piece.generateFromShapes(shapes_J, rows, cols);
 
-  TEST_ASSERT_EQUAL(4, piece.rows);
-  TEST_ASSERT_EQUAL(4, piece.cols);
+  TEST_ASSERT_EQUAL(4, piece.shapeFacing(UP).getRows());
+  TEST_ASSERT_EQUAL(4, piece.shapeFacing(UP).getCols());
+  TEST_ASSERT_EQUAL(0, piece.shapeFacing(UP).getBBox().uLeft.row);
+  TEST_ASSERT_EQUAL(2, piece.shapeFacing(UP).getBBox().lRight.col);
+  TEST_ASSERT_EQUAL(1, piece.shapeFacing(UP).getBBox().lRight.row);
+  TEST_ASSERT_EQUAL(0, piece.shapeFacing(UP).getBBox().uLeft.col);
 
-  TEST_ASSERT_EQUAL(4, piece.shapes[UP].rows);
-  TEST_ASSERT_EQUAL(4, piece.shapes[UP].cols);
-  TEST_ASSERT_EQUAL(0, piece.shapes[UP].bbox.uLeft.row);
-  TEST_ASSERT_EQUAL(2, piece.shapes[UP].bbox.lRight.col);
-  TEST_ASSERT_EQUAL(1, piece.shapes[UP].bbox.lRight.row);
-  TEST_ASSERT_EQUAL(0, piece.shapes[UP].bbox.uLeft.col);
+  TEST_ASSERT_EQUAL(4, piece.shapeFacing(RIGHT).getRows());
+  TEST_ASSERT_EQUAL(4, piece.shapeFacing(RIGHT).getCols());
+  TEST_ASSERT_EQUAL(0, piece.shapeFacing(RIGHT).getBBox().uLeft.row);
+  TEST_ASSERT_EQUAL(2, piece.shapeFacing(RIGHT).getBBox().lRight.col);
+  TEST_ASSERT_EQUAL(2, piece.shapeFacing(RIGHT).getBBox().lRight.row);
+  TEST_ASSERT_EQUAL(1, piece.shapeFacing(RIGHT).getBBox().uLeft.col);
 
-  TEST_ASSERT_EQUAL(4, piece.shapes[RIGHT].rows);
-  TEST_ASSERT_EQUAL(4, piece.shapes[RIGHT].cols);
-  TEST_ASSERT_EQUAL(0, piece.shapes[RIGHT].bbox.uLeft.row);
-  TEST_ASSERT_EQUAL(2, piece.shapes[RIGHT].bbox.lRight.col);
-  TEST_ASSERT_EQUAL(2, piece.shapes[RIGHT].bbox.lRight.row);
-  TEST_ASSERT_EQUAL(1, piece.shapes[RIGHT].bbox.uLeft.col);
+  TEST_ASSERT_EQUAL(4, piece.shapeFacing(DOWN).getRows());
+  TEST_ASSERT_EQUAL(4, piece.shapeFacing(DOWN).getCols());
+  TEST_ASSERT_EQUAL(1, piece.shapeFacing(DOWN).getBBox().uLeft.row);
+  TEST_ASSERT_EQUAL(2, piece.shapeFacing(DOWN).getBBox().lRight.col);
+  TEST_ASSERT_EQUAL(2, piece.shapeFacing(DOWN).getBBox().lRight.row);
+  TEST_ASSERT_EQUAL(0, piece.shapeFacing(DOWN).getBBox().uLeft.col);
 
-  TEST_ASSERT_EQUAL(4, piece.shapes[DOWN].rows);
-  TEST_ASSERT_EQUAL(4, piece.shapes[DOWN].cols);
-  TEST_ASSERT_EQUAL(1, piece.shapes[DOWN].bbox.uLeft.row);
-  TEST_ASSERT_EQUAL(2, piece.shapes[DOWN].bbox.lRight.col);
-  TEST_ASSERT_EQUAL(2, piece.shapes[DOWN].bbox.lRight.row);
-  TEST_ASSERT_EQUAL(0, piece.shapes[DOWN].bbox.uLeft.col);
-
-  TEST_ASSERT_EQUAL(4, piece.shapes[LEFT].rows);
-  TEST_ASSERT_EQUAL(4, piece.shapes[LEFT].cols);
-  TEST_ASSERT_EQUAL(0, piece.shapes[LEFT].bbox.uLeft.row);
-  TEST_ASSERT_EQUAL(1, piece.shapes[LEFT].bbox.lRight.col);
-  TEST_ASSERT_EQUAL(2, piece.shapes[LEFT].bbox.lRight.row);
-  TEST_ASSERT_EQUAL(0, piece.shapes[LEFT].bbox.uLeft.col);
+  TEST_ASSERT_EQUAL(4, piece.shapeFacing(LEFT).getRows());
+  TEST_ASSERT_EQUAL(4, piece.shapeFacing(LEFT).getCols());
+  TEST_ASSERT_EQUAL(0, piece.shapeFacing(LEFT).getBBox().uLeft.row);
+  TEST_ASSERT_EQUAL(1, piece.shapeFacing(LEFT).getBBox().lRight.col);
+  TEST_ASSERT_EQUAL(2, piece.shapeFacing(LEFT).getBBox().lRight.row);
+  TEST_ASSERT_EQUAL(0, piece.shapeFacing(LEFT).getBBox().uLeft.col);
 }
 
 void test_in_bounds(void) {
@@ -294,21 +289,21 @@ void test_in_bounds(void) {
   };
   int rows = 4;
   int cols = 4;
-  piece_t piece;
-  generateFromShapes(shapes_J, rows, cols, piece);
+  Piece piece;
+  piece.generateFromShapes(shapes_J, rows, cols);
 
-  shape_t grid;
-  shapeFromChars(board_empty_grid, 20, 10, grid);
+  Shape grid;
+  grid.setFromChars(board_empty_grid, 20, 10);
 
-  TEST_ASSERT_TRUE(inBounds(grid, piece.shapes[UP], (struct point) { 0, 0 }));
-  TEST_ASSERT_TRUE(inBounds(grid, piece.shapes[UP], (struct point) { 0, 8 }));
-  TEST_ASSERT_TRUE(inBounds(grid, piece.shapes[UP], (struct point) { 19, 0 }));
-  TEST_ASSERT_TRUE(inBounds(grid, piece.shapes[UP], (struct point) { 19, 8 }));
+  TEST_ASSERT_TRUE(inBounds(grid, piece.shapeFacing(UP), (struct point) { 0, 0 }));
+  TEST_ASSERT_TRUE(inBounds(grid, piece.shapeFacing(UP), (struct point) { 0, 8 }));
+  TEST_ASSERT_TRUE(inBounds(grid, piece.shapeFacing(UP), (struct point) { 19, 0 }));
+  TEST_ASSERT_TRUE(inBounds(grid, piece.shapeFacing(UP), (struct point) { 19, 8 }));
 
-  TEST_ASSERT_FALSE(inBounds(grid, piece.shapes[UP], (struct point) { -1, 0 }));
-  TEST_ASSERT_FALSE(inBounds(grid, piece.shapes[UP], (struct point) { 0, 9 }));
-  TEST_ASSERT_FALSE(inBounds(grid, piece.shapes[UP], (struct point) { 20, 0 }));
-  TEST_ASSERT_FALSE(inBounds(grid, piece.shapes[UP], (struct point) { 18, 9 }));
+  TEST_ASSERT_FALSE(inBounds(grid, piece.shapeFacing(UP), (struct point) { -1, 0 }));
+  TEST_ASSERT_FALSE(inBounds(grid, piece.shapeFacing(UP), (struct point) { 0, 9 }));
+  TEST_ASSERT_FALSE(inBounds(grid, piece.shapeFacing(UP), (struct point) { 20, 0 }));
+  TEST_ASSERT_FALSE(inBounds(grid, piece.shapeFacing(UP), (struct point) { 18, 9 }));
 }
 
 void test_collide(void) {
@@ -320,10 +315,10 @@ void test_collide(void) {
                             "xx  ";
   const char *shape_chars = " o"
                             " o";
-  shape_t board;
-  shape_t shape;
-  shapeFromChars(board_chars, 6, 4, board);
-  shapeFromChars(shape_chars, 2, 2, shape);
+  Shape board;
+  Shape shape;
+  board.setFromChars(board_chars, 6, 4);
+  shape.setFromChars(shape_chars, 2, 2);
 
   // Valid, all-on-screen placement.
   TEST_ASSERT_FALSE(collide(board, shape, (struct point) { 0, 0 }));
@@ -355,12 +350,12 @@ void test_stick(void) {
                             "xx  ";
   const char *shape_chars = " o"
                             " o";
-  shape_t board;
-  shape_t shape;
-  shapeFromChars(board_chars, 6, 4, board);
-  shapeFromChars(shape_chars, 2, 2, shape);
+  Shape board;
+  Shape shape;
+  board.setFromChars(board_chars, 6, 4);
+  shape.setFromChars(shape_chars, 2, 2);
 
-  stick(board, shape, (struct point) { 4, 1 });
+  board.drop(shape, (struct point) { 4, 1 });
 
   // This is what it looks like after sticking.
   const char *stuck_chars = "    "
@@ -369,9 +364,9 @@ void test_stick(void) {
                             "xxx "
                             "xxo "
                             "xxo ";
-  shape_t expected;
-  shapeFromChars(stuck_chars, 6, 4, expected);
-  TEST_ASSERT_TRUE(shapesEqual(board, expected));
+  Shape expected;
+  expected.setFromChars(stuck_chars, 6, 4);
+  TEST_ASSERT_TRUE(board == expected);
 }
 
 void test_sequence(void) {
@@ -397,38 +392,34 @@ void test_sequence(void) {
 }
 
 void test_make_canvas(void) {
-  shape_t canvas;
+  Shape canvas;
   makeCanvas(canvas);
 
-  TEST_ASSERT_EQUAL(20, canvas.rows);
-  TEST_ASSERT_EQUAL(10, canvas.cols);
+  TEST_ASSERT_EQUAL(20, canvas.getRows());
+  TEST_ASSERT_EQUAL(10, canvas.getCols());
   for (uint8_t i = 0; i < 200; ++i) {
-    TEST_ASSERT_EQUAL(' ', canvas.grid[i]);
+    TEST_ASSERT_EQUAL(' ', canvas.getGrid()[i]);
   }
 }
 
 void test_new_game_renders_empty_canvas(void) {
-  shape_t canvas;
+  Shape canvas;
   Sequence sequence = Sequence(0);
 
   makeCanvas(canvas);
   // Dirty the canvas with some pixels.
-  for (uint8_t i = 0; i < 200; ++i) {
-    canvas.grid[i] = 'x';
-  }
+  canvas.fillWith('x');
 
   // Confirm that did what we think it did.
-  TEST_ASSERT_EQUAL(20, canvas.rows);
-  TEST_ASSERT_EQUAL(10, canvas.cols);
+  TEST_ASSERT_EQUAL(20, canvas.getRows());
+  TEST_ASSERT_EQUAL(10, canvas.getCols());
 
   Game game = Game(canvas, sequence);
   for (uint8_t i = 0; i < 200; ++i) {
-    TEST_ASSERT_EQUAL(' ', canvas.grid[i]);
+    TEST_ASSERT_EQUAL(' ', canvas.getGrid()[i]);
   }
-  TEST_ASSERT_EQUAL(20, canvas.rows);
-  TEST_ASSERT_EQUAL(10, canvas.cols);
-
-  // TODO: I don't think the bounding box is updated correctly.
+  TEST_ASSERT_EQUAL(20, canvas.getRows());
+  TEST_ASSERT_EQUAL(10, canvas.getCols());
 }
 
 int main(int argc, char** argv) {
