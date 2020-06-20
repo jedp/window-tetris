@@ -73,7 +73,7 @@ bool Shape::collides(const Shape &other, point_t dst) {
  *
  * The destination point is in board space.
  */
-void Shape::drop(Shape &other, point_t dst) {
+void Shape::drop(const Shape &other, point_t dst) {
   for (uint8_t i = dst.row; i < (int)rows && i < (int)other.getRows() + dst.row; ++i) {
     if (i < 0) continue;
 

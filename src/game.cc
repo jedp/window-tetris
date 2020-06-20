@@ -2,7 +2,7 @@
 #include <geom.h>
 
 const char EMPTY_SPACE = ' ';
-const point_t START_COORDINATES = { 1, 3 };
+const point_t START_COORDINATES = (struct point) { 0, 3 };
 
 const char *PIECE_I[] = {
   [UP] =    "    IIII        ",
@@ -79,6 +79,8 @@ Game::Game(
   makeCanvas(board);
 
   reset();
+
+  produceNextPiece();
 }
 
 void Game::produceNextPiece() {
@@ -88,11 +90,14 @@ void Game::produceNextPiece() {
     gameOver();
   }
 
-  currentPiece->setCoordinates(START_COORDINATES);
+  (*currentPiece).setCoordinates(START_COORDINATES);
+
+  render();
 }
 
 void Game::render() {
-  canvas.setFromChars(board.getGrid(), board.getRows(), board.getCols());
+  canvas.drop(board, (struct point) { 0, 0});
+  canvas.drop((*currentPiece).getCurrentShape(), (*currentPiece).getCoordinates());
   canvas.updateBoundingBox();
 }
 
@@ -101,10 +106,9 @@ void Game::reset() {
 
   board.fillWith(EMPTY_SPACE);
   canvas.fillWith(EMPTY_SPACE);
-
-  render();
 }
 
 void Game::gameOver() {
   gameOverCallback();
 }
+

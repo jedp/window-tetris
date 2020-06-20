@@ -11,8 +11,9 @@ orientation_t nextAntiClockwiseOrientation(orientation_t from) {
   return orientation_t((from + 3) % 4);
 }
 
-Piece::Piece() {
-  coordinates = (struct point) { 0, 0 };
+Piece::Piece()
+  : coordinates((struct point) { 0, 0 })
+{
 }
 
 void Piece::generateFromShapes(const char **shapes, int rows, int cols) {

@@ -5,7 +5,6 @@
 #include <constants.h>
 #include <sequence.h>
 #include <unity.h>
-#include <iostream>
 
 const char *board_empty_grid =
   "          "
@@ -28,6 +27,29 @@ const char *board_empty_grid =
   "          "
   "          "
   "          ";
+
+const char *board_with_first_piece =
+  "          "
+  "   IIII   "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          ";
+
 
 const char *board0_grid =
   "          "
@@ -410,7 +432,7 @@ void test_new_game_renders_empty_canvas(void) {
   Sequence sequence = Sequence(0);
 
   makeCanvas(canvas);
-  // Dirty the canvas with some pixels.
+  // Dirty the canvas with some pixels. The game will clear these.
   canvas.fillWith('x');
 
   // Confirm that did what we think it did.
@@ -418,11 +440,24 @@ void test_new_game_renders_empty_canvas(void) {
   TEST_ASSERT_EQUAL(10, canvas.getCols());
 
   Game game = Game(canvas, sequence, emptyCallback);
-  for (uint8_t i = 0; i < 200; ++i) {
-    TEST_ASSERT_EQUAL(' ', canvas.getGrid()[i]);
-  }
+  // First and last squares are blank.
+  TEST_ASSERT_EQUAL(' ', canvas.getGrid()[0]);
+  TEST_ASSERT_EQUAL(' ', canvas.getGrid()[199]);
   TEST_ASSERT_EQUAL(20, canvas.getRows());
   TEST_ASSERT_EQUAL(10, canvas.getCols());
+}
+
+void test_new_game_renders_first_piece(void) {
+  Shape canvas;
+  Sequence sequence = Sequence(0);
+  makeCanvas(canvas);
+
+  Game game = Game(canvas, sequence, emptyCallback);
+
+  // First piece has been dropped.
+  Shape expected;
+  expected.setFromChars(board_with_first_piece, 20, 10);
+  TEST_ASSERT_TRUE(canvas == expected);
 }
 
 int main(int argc, char** argv) {
@@ -456,6 +491,7 @@ int main(int argc, char** argv) {
   // game.h
   RUN_TEST(test_make_canvas);
   RUN_TEST(test_new_game_renders_empty_canvas);
+  RUN_TEST(test_new_game_renders_first_piece);
 
   UNITY_END();
 }
