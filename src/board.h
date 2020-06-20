@@ -38,10 +38,3 @@ bool inBounds(Shape board, Shape shape, point_t dst);
  */
 bool collide(Shape board, Shape shape, point_t dst);
 
-/**
- * Stick the shape to the board at the given point.
- *
- * The destination point is in board space.
- */
-void stick(Shape board, Shape shape, point_t dst);
-

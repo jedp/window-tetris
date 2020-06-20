@@ -355,7 +355,7 @@ void test_stick(void) {
   board.setFromChars(board_chars, 6, 4);
   shape.setFromChars(shape_chars, 2, 2);
 
-  stick(board, shape, (struct point) { 4, 1 });
+  board.drop(shape, (struct point) { 4, 1 });
 
   // This is what it looks like after sticking.
   const char *stuck_chars = "    "

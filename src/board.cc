@@ -60,24 +60,3 @@ bool collide(Shape board, Shape shape, point_t dst) {
   return false;
 }
 
-void stick(Shape board, Shape shape, point_t dst) {
-  for (int i = dst.row; i < (int)board.getRows() && i < (int)shape.getRows() + dst.row; ++i) {
-    // We don't have off-screen geometry.
-    if (i < 0) continue;
-
-    for (int j = dst.col; j < (int)board.getCols() && j < (int)shape.getCols() + dst.col; ++j) {
-      // We don't have off-screen geometry.
-      if (j < 0) continue;
-
-      // i and j are in grid space.
-      // Offset to get the local coordinate in the shape.
-      char cell = shape.getGrid()[(i - dst.row) * shape.getCols() + (j - dst.col)];
-      if (cell != ' ') {
-        board.getGrid()[i * board.getCols() + j] = cell;
-      }
-    }
-  }
-
-  board.updateBoundingBox();
-}
-

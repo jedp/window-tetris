@@ -56,6 +56,28 @@ void Shape::fillWith(char fillChar) {
   updateBoundingBox();
 }
 
+/**
+ * Stick the shape to the board at the given point.
+ *
+ * The destination point is in board space.
+ */
+void Shape::drop(Shape &other, point_t dst) {
+  for (uint8_t i = dst.row; i < (int)rows && i < (int)other.getRows() + dst.row; ++i) {
+    if (i < 0) continue;
+
+    for (uint8_t j = dst.col; j < (int)cols && j < (int)other.getCols() + dst.col; ++j) {
+      if (j < 0) continue;
+
+      char cell = other.getGrid()[(i - dst.row) * other.getCols() + (j - dst.col)];
+      if (cell != ' ') {
+        grid[i * cols + j] = cell;
+      }
+    }
+  }
+
+  updateBoundingBox();
+}
+
 bool Shape::operator==(const Shape &other) {
   if (rows != other.rows) return false;
   if (cols != other.cols) return false;
