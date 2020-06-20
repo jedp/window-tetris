@@ -9,6 +9,9 @@ const int W_BOARD = 10;
 const int W_PIECE = 4;
 const int H_PIECE = 4;
 
+const int START_ROW = 2;
+const int START_COL = 4;
+
 typedef enum {
   STILL_ALIVE,
   NOT_STILL_ALIVE,
@@ -28,11 +31,11 @@ class Game {
   private:
     piece_t pieces[NUM_PIECES];
     piece_t *currentPiece;
-    piece_t *nextPiece;
     shape_t board;
     shape_t canvas;
     Sequence sequence;
     uint32_t score;
+    void produceNextPiece();
     void render();
     void reset();
 };

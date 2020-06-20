@@ -91,6 +91,9 @@ uint32_t Game::getScore() {
   return score;
 }
 
+void Game::produceNextPiece() {
+}
+
 void Game::render() {
   // Write our data to the canvas.
   for (uint8_t i = 0; i < H_BOARD * W_BOARD; ++i) {
