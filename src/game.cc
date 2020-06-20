@@ -52,23 +52,11 @@ const char *PIECE_Z[] = {
   [LEFT] =  " Z  ZZ  Z       "
 };
 
-void makeCanvas(shape_t &canvas) {
-  canvas.rows = H_BOARD;
-  canvas.cols = W_BOARD;
-  // Conventionally, our bbox for an "empty" shape is 0.
-  canvas.bbox = (struct bbox) {
-    (struct point) { 0, 0 },
-    (struct point) { 0, 0 }
-  };
-  canvas.grid = new char[H_BOARD * W_BOARD]();
-
-  // Fill each cell with the default, empty value.
-  for (uint8_t i = 0; i < H_BOARD * W_BOARD; ++i) {
-    canvas.grid[i] = EMPTY_SPACE;
-  }
+void makeCanvas(Shape &canvas) {
+  canvas.setWithChar(EMPTY_SPACE, H_BOARD, W_BOARD);
 }
 
-Game::Game(const shape_t &canvas, const Sequence &sequence)
+Game::Game(const Shape &canvas, const Sequence &sequence)
   : canvas(canvas),
     sequence(sequence) {
 
@@ -95,17 +83,15 @@ void Game::produceNextPiece() {
 }
 
 void Game::render() {
-  // Write our data to the canvas.
-  for (uint8_t i = 0; i < H_BOARD * W_BOARD; ++i) {
-    canvas.grid[i] = board.grid[i];
-  }
-  updateBoundingBox(canvas);
+  canvas.setFromChars(board.getGrid(), board.getRows(), board.getCols());
+  canvas.updateBoundingBox();
 }
 
 void Game::reset() {
   score = 0;
 
-  fillShape(board, EMPTY_SPACE);
+  board.fillWith(EMPTY_SPACE);
+  canvas.fillWith(EMPTY_SPACE);
 
   render();
 }

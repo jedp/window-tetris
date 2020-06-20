@@ -28,19 +28,19 @@ class Piece {
   public:
     Piece();
     void generateFromShapes(const char **shapes, int rows, int cols);
-    shape_t getCurrentShape();
+    Shape getCurrentShape();
     void setCoordinates(point_t coordinates);
     point_t getCoordinates();
-    shape_t shapeFacing(orientation_t orientation);
-    shape_t shapeForClockwiseRotation();
-    shape_t shapeForAntiClockwiseRotation();
+    Shape shapeFacing(orientation_t orientation);
+    Shape shapeForClockwiseRotation();
+    Shape shapeForAntiClockwiseRotation();
     void rotateClockwise();
     void rotateAntiClockwise();
 
   private:
     point_t coordinates;
     orientation_t orientation;
-    shape_t shapes[4];
+    Shape shapes[4];
 };
 
 orientation_t nextClockwiseOrientation(orientation_t from);

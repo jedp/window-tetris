@@ -25,34 +25,34 @@ void getFullRowsRange(const char *board, int &start, int &end) {
   end = _end;
 }
 
-bool inBounds(shape_t board, shape_t shape, point_t dst) {
-  if (dst.row - shape.bbox.uLeft.row < 0) return false;
-  if (dst.row > board.rows - shape.bbox.lRight.row) return false;
-  if (dst.col - shape.bbox.uLeft.col < 0) return false;
-  if (dst.col > board.cols - shape.bbox.lRight.col) return false;
+bool inBounds(Shape board, Shape shape, point_t dst) {
+  if (dst.row - shape.getBBox().uLeft.row < 0) return false;
+  if (dst.row > board.getRows() - shape.getBBox().lRight.row) return false;
+  if (dst.col - shape.getBBox().uLeft.col < 0) return false;
+  if (dst.col > board.getCols() - shape.getBBox().lRight.col) return false;
 
   return true;
 }
 
-bool collide(shape_t board, shape_t shape, point_t dst) {
-  if (dst.row >= board.rows) return false;
-  if (dst.col >= board.cols) return false;
+bool collide(Shape board, Shape shape, point_t dst) {
+  if (dst.row >= board.getRows()) return false;
+  if (dst.col >= board.getCols()) return false;
 
   // If it's above the board's bounding box, don't do any hard work.
-  if (dst.row + shape.rows < board.bbox.uLeft.row) return false;
+  if (dst.row + shape.getRows() < board.getBBox().uLeft.row) return false;
 
-  for (int i = dst.row; i < (int)board.rows && i < (int)shape.rows + dst.row; ++i) {
+  for (int i = dst.row; i < (int)board.getRows() && i < (int)shape.getRows() + dst.row; ++i) {
     // We don't have off-screen collisions.
     if (i < 0) continue;
 
-    for (int j = dst.col; j < (int)board.cols && j < (int)shape.cols + dst.col; ++j) {
+    for (int j = dst.col; j < (int)board.getCols() && j < (int)shape.getCols() + dst.col; ++j) {
       // We don't have off-screen collisions.
       if (j < 0) continue;
 
       // i and j are in grid space.
       // Offset to get the local coordinate in the shape.
-      if (shape.grid[(i - dst.row) * shape.cols + (j - dst.col)] != ' '
-          && board.grid[i * board.cols + j] != ' ') {
+      if (shape.getGrid()[(i - dst.row) * shape.getCols() + (j - dst.col)] != ' '
+          && board.getGrid()[i * board.getCols() + j] != ' ') {
         return true;
       }
     }
@@ -60,24 +60,24 @@ bool collide(shape_t board, shape_t shape, point_t dst) {
   return false;
 }
 
-void stick(shape_t board, shape_t shape, point_t dst) {
-  for (int i = dst.row; i < (int)board.rows && i < (int)shape.rows + dst.row; ++i) {
+void stick(Shape board, Shape shape, point_t dst) {
+  for (int i = dst.row; i < (int)board.getRows() && i < (int)shape.getRows() + dst.row; ++i) {
     // We don't have off-screen geometry.
     if (i < 0) continue;
 
-    for (int j = dst.col; j < (int)board.cols && j < (int)shape.cols + dst.col; ++j) {
+    for (int j = dst.col; j < (int)board.getCols() && j < (int)shape.getCols() + dst.col; ++j) {
       // We don't have off-screen geometry.
       if (j < 0) continue;
 
       // i and j are in grid space.
       // Offset to get the local coordinate in the shape.
-      char cell = shape.grid[(i - dst.row) * shape.cols + (j - dst.col)];
+      char cell = shape.getGrid()[(i - dst.row) * shape.getCols() + (j - dst.col)];
       if (cell != ' ') {
-        board.grid[i * board.cols + j] = cell;
+        board.getGrid()[i * board.getCols() + j] = cell;
       }
     }
   }
 
-  updateBoundingBox(board);
+  board.updateBoundingBox();
 }
 

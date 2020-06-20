@@ -2,6 +2,76 @@
 #include "geom.h"
 #include "board.h"
 
+uint8_t Shape::getRows() {
+  return rows;
+}
+
+uint8_t Shape::getCols() {
+  return cols;
+}
+
+bbox_t Shape::getBBox() {
+  return bbox;
+}
+
+char* Shape::getGrid() {
+  return grid;
+}
+
+void Shape::setWithChar(char c, int rows, int cols) {
+  this->rows = rows;
+  this->cols = cols;
+  this->grid = new char[rows * cols]();
+
+  for (uint8_t i = 0; i < rows * cols; ++i) {
+    this->grid[i] = c;
+  }
+
+  updateBoundingBox();
+}
+
+void Shape::setFromChars(const char *chars, int rows, int cols) {
+  this->rows = rows;
+  this->cols = cols;
+  this->grid = new char[rows * cols]();
+
+  for (uint8_t i = 0; i < rows * cols; ++i) {
+    this->grid[i] = chars[i];
+  }
+
+  updateBoundingBox();
+}
+
+void Shape::setCharAt(char c, point_t coordinates) {
+  grid[coordinates.row * cols + coordinates.col] = c;
+
+  updateBoundingBox();
+}
+
+void Shape::fillWith(char fillChar) {
+  for (uint8_t i = 0; i < rows * cols; ++i) {
+    grid[i] = fillChar;
+  }
+
+  updateBoundingBox();
+}
+
+bool Shape::operator==(const Shape &other) {
+  if (rows != other.rows) return false;
+  if (cols != other.cols) return false;
+
+  for (uint8_t i = 0; i < rows * cols; ++i) {
+    if (grid[i] != other.grid[i]) {
+      return false;
+    }
+  }
+  return true;
+}
+
+void Shape::updateBoundingBox() {
+  boundingBox(grid, rows, cols, bbox);
+}
+
 bool rowEmpty(const char *grid, int rows, int cols, int row) {
   for (uint8_t col = 0; col < cols; ++col) {
     if (grid[row * cols + col] != ' ') {
@@ -58,47 +128,5 @@ void boundingBox(const char *grid, int rows, int cols, bbox_t &bbox) {
   bbox.uLeft.col = _left;
   bbox.lRight.row = _bottom;
   bbox.lRight.col = _right;
-}
-
-void updateBoundingBox(shape_t &shape) {
-  boundingBox(shape.grid, shape.rows, shape.cols, shape.bbox);
-}
-
-void shapeFromChars(const char *chars, int rows, int cols, shape_t &shape) {
-  bbox_t bbox;
-  shape.rows = rows;
-  shape.cols = cols;
-  shape.grid = new char[rows * cols]();
-
-  for (uint8_t i = 0; i < rows * cols; ++i) {
-    shape.grid[i] = chars[i];
-  }
-
-  updateBoundingBox(shape);
-}
-
-bool shapesEqual(const shape_t shape1, const shape_t shape2) {
-  if (shape1.rows != shape2.rows) return false;
-  if (shape1.cols != shape2.cols) return false;
-
-  for (uint8_t i = 0; i < shape1.rows; ++i) {
-   for (uint8_t j = 0; j < shape1.cols; ++j) {
-      if (shape1.grid[i * shape1.cols + j] != shape2.grid[i * shape1.cols + j]) {
-        return false;
-      }
-    }
-  }
-  return true;
-}
-
-void fillShape(shape_t &shape, char c) {
-  for (uint8_t i = 0; i < shape.rows; ++i) {
-    for (uint8_t j = 0; j < shape.cols; ++j) {
-      shape.grid[i * shape.cols + j] = c;
-    }
-  }
-
-  // Re-compute bounding box when changing contents of shape.
-  updateBoundingBox(shape);
 }
 

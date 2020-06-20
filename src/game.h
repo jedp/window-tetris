@@ -17,12 +17,12 @@ typedef enum {
   NOT_STILL_ALIVE,
 } move_result_t;
 
-void makeCanvas(shape_t &canvas);
+void makeCanvas(Shape &canvas);
 
 class Game {
 
   public:
-    Game(const shape_t &canvas, const Sequence &sequence);
+    Game(const Shape &canvas, const Sequence &sequence);
     uint32_t getScore();
     move_result_t move(orientation_t movement);
     move_result_t rotate(orientation_t rotationDirection);
@@ -31,8 +31,8 @@ class Game {
   private:
     Piece pieces[NUM_PIECES];
     Piece *currentPiece;
-    shape_t board;
-    shape_t canvas;
+    Shape board;
+    Shape canvas;
     Sequence sequence;
     uint32_t score;
     void produceNextPiece();

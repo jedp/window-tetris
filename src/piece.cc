@@ -17,13 +17,13 @@ Piece::Piece() {
 
 void Piece::generateFromShapes(const char **shapes, int rows, int cols) {
   for (uint8_t orientation = UP; orientation <= LEFT; ++orientation) {
-    shape_t shape;
-    shapeFromChars(shapes[orientation], rows, cols, shape);
+    Shape shape;
+    shape.setFromChars(shapes[orientation], rows, cols);
     this->shapes[orientation] = shape;
   }
 }
 
-shape_t Piece::getCurrentShape() {
+Shape Piece::getCurrentShape() {
   return shapes[orientation];
 }
 
@@ -35,15 +35,15 @@ point_t Piece::getCoordinates() {
   return coordinates;
 }
 
-shape_t Piece::shapeFacing(orientation_t orientation) {
+Shape Piece::shapeFacing(orientation_t orientation) {
   return shapes[orientation];
 }
 
-shape_t Piece::shapeForClockwiseRotation() {
+Shape Piece::shapeForClockwiseRotation() {
   return shapes[nextClockwiseOrientation(orientation)];
 }
 
-shape_t Piece::shapeForAntiClockwiseRotation() {
+Shape Piece::shapeForAntiClockwiseRotation() {
   return shapes[nextAntiClockwiseOrientation(orientation)];
 }
 
