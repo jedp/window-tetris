@@ -1,8 +1,6 @@
 #include <game.h>
 #include <geom.h>
 
-#include <iostream>
-
 const char EMPTY_SPACE = ' ';
 
 const char *PIECE_I[] = {
