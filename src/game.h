@@ -29,8 +29,8 @@ class Game {
     move_result_t tick();
 
   private:
-    piece_t pieces[NUM_PIECES];
-    piece_t *currentPiece;
+    Piece pieces[NUM_PIECES];
+    Piece *currentPiece;
     shape_t board;
     shape_t canvas;
     Sequence sequence;

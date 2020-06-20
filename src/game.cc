@@ -73,13 +73,13 @@ Game::Game(const shape_t &canvas, const Sequence &sequence)
     sequence(sequence) {
 
   // Generate all shapes, which are constant and immutable.
-  generateFromShapes(PIECE_I, 4, 4, pieces[I]);
-  generateFromShapes(PIECE_J, 4, 4, pieces[J]);
-  generateFromShapes(PIECE_L, 4, 4, pieces[L]);
-  generateFromShapes(PIECE_O, 4, 4, pieces[O]);
-  generateFromShapes(PIECE_S, 4, 4, pieces[S]);
-  generateFromShapes(PIECE_T, 4, 4, pieces[T]);
-  generateFromShapes(PIECE_Z, 4, 4, pieces[Z]);
+  pieces[I].generateFromShapes(PIECE_I, 4, 4);
+  pieces[J].generateFromShapes(PIECE_J, 4, 4);
+  pieces[L].generateFromShapes(PIECE_L, 4, 4);
+  pieces[O].generateFromShapes(PIECE_O, 4, 4);
+  pieces[S].generateFromShapes(PIECE_S, 4, 4);
+  pieces[T].generateFromShapes(PIECE_T, 4, 4);
+  pieces[Z].generateFromShapes(PIECE_Z, 4, 4);
 
   // Create a new board. This will be re-used for all games.
   makeCanvas(board);

@@ -135,17 +135,17 @@ void test_col_empty(void) {
 }
 
 void test_rotate_clockwise(void) {
-  TEST_ASSERT_EQUAL(RIGHT, rotateClockwise(UP));
-  TEST_ASSERT_EQUAL(DOWN, rotateClockwise(RIGHT));
-  TEST_ASSERT_EQUAL(LEFT, rotateClockwise(DOWN));
-  TEST_ASSERT_EQUAL(UP, rotateClockwise(LEFT));
+  TEST_ASSERT_EQUAL(RIGHT, nextClockwiseOrientation(UP));
+  TEST_ASSERT_EQUAL(DOWN, nextClockwiseOrientation(RIGHT));
+  TEST_ASSERT_EQUAL(LEFT, nextClockwiseOrientation(DOWN));
+  TEST_ASSERT_EQUAL(UP, nextClockwiseOrientation(LEFT));
 }
 
 void test_rotate_anticlockwise(void) {
-  TEST_ASSERT_EQUAL(LEFT, rotateAntiClockwise(UP));
-  TEST_ASSERT_EQUAL(DOWN, rotateAntiClockwise(LEFT));
-  TEST_ASSERT_EQUAL(RIGHT, rotateAntiClockwise(DOWN));
-  TEST_ASSERT_EQUAL(UP, rotateAntiClockwise(RIGHT));
+  TEST_ASSERT_EQUAL(LEFT, nextAntiClockwiseOrientation(UP));
+  TEST_ASSERT_EQUAL(DOWN, nextAntiClockwiseOrientation(LEFT));
+  TEST_ASSERT_EQUAL(RIGHT, nextAntiClockwiseOrientation(DOWN));
+  TEST_ASSERT_EQUAL(UP, nextAntiClockwiseOrientation(RIGHT));
 }
 
 void test_bounding_box_empty_grid(void) {
@@ -250,36 +250,36 @@ void test_generate_shapes(void) {
   };
   int rows = 4;
   int cols = 4;
-  piece_t piece;
-  generateFromShapes(shapes_J, rows, cols, piece);
+  Piece piece;
+  piece.generateFromShapes(shapes_J, rows, cols);
 
-  TEST_ASSERT_EQUAL(4, piece.shapes[UP].rows);
-  TEST_ASSERT_EQUAL(4, piece.shapes[UP].cols);
-  TEST_ASSERT_EQUAL(0, piece.shapes[UP].bbox.uLeft.row);
-  TEST_ASSERT_EQUAL(2, piece.shapes[UP].bbox.lRight.col);
-  TEST_ASSERT_EQUAL(1, piece.shapes[UP].bbox.lRight.row);
-  TEST_ASSERT_EQUAL(0, piece.shapes[UP].bbox.uLeft.col);
+  TEST_ASSERT_EQUAL(4, piece.shapeFacing(UP).rows);
+  TEST_ASSERT_EQUAL(4, piece.shapeFacing(UP).cols);
+  TEST_ASSERT_EQUAL(0, piece.shapeFacing(UP).bbox.uLeft.row);
+  TEST_ASSERT_EQUAL(2, piece.shapeFacing(UP).bbox.lRight.col);
+  TEST_ASSERT_EQUAL(1, piece.shapeFacing(UP).bbox.lRight.row);
+  TEST_ASSERT_EQUAL(0, piece.shapeFacing(UP).bbox.uLeft.col);
 
-  TEST_ASSERT_EQUAL(4, piece.shapes[RIGHT].rows);
-  TEST_ASSERT_EQUAL(4, piece.shapes[RIGHT].cols);
-  TEST_ASSERT_EQUAL(0, piece.shapes[RIGHT].bbox.uLeft.row);
-  TEST_ASSERT_EQUAL(2, piece.shapes[RIGHT].bbox.lRight.col);
-  TEST_ASSERT_EQUAL(2, piece.shapes[RIGHT].bbox.lRight.row);
-  TEST_ASSERT_EQUAL(1, piece.shapes[RIGHT].bbox.uLeft.col);
+  TEST_ASSERT_EQUAL(4, piece.shapeFacing(RIGHT).rows);
+  TEST_ASSERT_EQUAL(4, piece.shapeFacing(RIGHT).cols);
+  TEST_ASSERT_EQUAL(0, piece.shapeFacing(RIGHT).bbox.uLeft.row);
+  TEST_ASSERT_EQUAL(2, piece.shapeFacing(RIGHT).bbox.lRight.col);
+  TEST_ASSERT_EQUAL(2, piece.shapeFacing(RIGHT).bbox.lRight.row);
+  TEST_ASSERT_EQUAL(1, piece.shapeFacing(RIGHT).bbox.uLeft.col);
 
-  TEST_ASSERT_EQUAL(4, piece.shapes[DOWN].rows);
-  TEST_ASSERT_EQUAL(4, piece.shapes[DOWN].cols);
-  TEST_ASSERT_EQUAL(1, piece.shapes[DOWN].bbox.uLeft.row);
-  TEST_ASSERT_EQUAL(2, piece.shapes[DOWN].bbox.lRight.col);
-  TEST_ASSERT_EQUAL(2, piece.shapes[DOWN].bbox.lRight.row);
-  TEST_ASSERT_EQUAL(0, piece.shapes[DOWN].bbox.uLeft.col);
+  TEST_ASSERT_EQUAL(4, piece.shapeFacing(DOWN).rows);
+  TEST_ASSERT_EQUAL(4, piece.shapeFacing(DOWN).cols);
+  TEST_ASSERT_EQUAL(1, piece.shapeFacing(DOWN).bbox.uLeft.row);
+  TEST_ASSERT_EQUAL(2, piece.shapeFacing(DOWN).bbox.lRight.col);
+  TEST_ASSERT_EQUAL(2, piece.shapeFacing(DOWN).bbox.lRight.row);
+  TEST_ASSERT_EQUAL(0, piece.shapeFacing(DOWN).bbox.uLeft.col);
 
-  TEST_ASSERT_EQUAL(4, piece.shapes[LEFT].rows);
-  TEST_ASSERT_EQUAL(4, piece.shapes[LEFT].cols);
-  TEST_ASSERT_EQUAL(0, piece.shapes[LEFT].bbox.uLeft.row);
-  TEST_ASSERT_EQUAL(1, piece.shapes[LEFT].bbox.lRight.col);
-  TEST_ASSERT_EQUAL(2, piece.shapes[LEFT].bbox.lRight.row);
-  TEST_ASSERT_EQUAL(0, piece.shapes[LEFT].bbox.uLeft.col);
+  TEST_ASSERT_EQUAL(4, piece.shapeFacing(LEFT).rows);
+  TEST_ASSERT_EQUAL(4, piece.shapeFacing(LEFT).cols);
+  TEST_ASSERT_EQUAL(0, piece.shapeFacing(LEFT).bbox.uLeft.row);
+  TEST_ASSERT_EQUAL(1, piece.shapeFacing(LEFT).bbox.lRight.col);
+  TEST_ASSERT_EQUAL(2, piece.shapeFacing(LEFT).bbox.lRight.row);
+  TEST_ASSERT_EQUAL(0, piece.shapeFacing(LEFT).bbox.uLeft.col);
 }
 
 void test_in_bounds(void) {
@@ -291,21 +291,21 @@ void test_in_bounds(void) {
   };
   int rows = 4;
   int cols = 4;
-  piece_t piece;
-  generateFromShapes(shapes_J, rows, cols, piece);
+  Piece piece;
+  piece.generateFromShapes(shapes_J, rows, cols);
 
   shape_t grid;
   shapeFromChars(board_empty_grid, 20, 10, grid);
 
-  TEST_ASSERT_TRUE(inBounds(grid, piece.shapes[UP], (struct point) { 0, 0 }));
-  TEST_ASSERT_TRUE(inBounds(grid, piece.shapes[UP], (struct point) { 0, 8 }));
-  TEST_ASSERT_TRUE(inBounds(grid, piece.shapes[UP], (struct point) { 19, 0 }));
-  TEST_ASSERT_TRUE(inBounds(grid, piece.shapes[UP], (struct point) { 19, 8 }));
+  TEST_ASSERT_TRUE(inBounds(grid, piece.shapeFacing(UP), (struct point) { 0, 0 }));
+  TEST_ASSERT_TRUE(inBounds(grid, piece.shapeFacing(UP), (struct point) { 0, 8 }));
+  TEST_ASSERT_TRUE(inBounds(grid, piece.shapeFacing(UP), (struct point) { 19, 0 }));
+  TEST_ASSERT_TRUE(inBounds(grid, piece.shapeFacing(UP), (struct point) { 19, 8 }));
 
-  TEST_ASSERT_FALSE(inBounds(grid, piece.shapes[UP], (struct point) { -1, 0 }));
-  TEST_ASSERT_FALSE(inBounds(grid, piece.shapes[UP], (struct point) { 0, 9 }));
-  TEST_ASSERT_FALSE(inBounds(grid, piece.shapes[UP], (struct point) { 20, 0 }));
-  TEST_ASSERT_FALSE(inBounds(grid, piece.shapes[UP], (struct point) { 18, 9 }));
+  TEST_ASSERT_FALSE(inBounds(grid, piece.shapeFacing(UP), (struct point) { -1, 0 }));
+  TEST_ASSERT_FALSE(inBounds(grid, piece.shapeFacing(UP), (struct point) { 0, 9 }));
+  TEST_ASSERT_FALSE(inBounds(grid, piece.shapeFacing(UP), (struct point) { 20, 0 }));
+  TEST_ASSERT_FALSE(inBounds(grid, piece.shapeFacing(UP), (struct point) { 18, 9 }));
 }
 
 void test_collide(void) {

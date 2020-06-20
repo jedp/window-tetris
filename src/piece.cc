@@ -3,19 +3,55 @@
 #include "geom.h"
 #include "piece.h"
 
-orientation_t rotateClockwise(orientation_t from) {
+orientation_t nextClockwiseOrientation(orientation_t from) {
   return orientation_t((from + 1) % 4);
 }
 
-orientation_t rotateAntiClockwise(orientation_t from) {
+orientation_t nextAntiClockwiseOrientation(orientation_t from) {
   return orientation_t((from + 3) % 4);
 }
 
-void generateFromShapes(const char **shapes, int rows, int cols, piece_t &piece) {
+Piece::Piece() {
+  coordinates = (struct point) { 0, 0 };
+}
+
+void Piece::generateFromShapes(const char **shapes, int rows, int cols) {
   for (uint8_t orientation = UP; orientation <= LEFT; ++orientation) {
     shape_t shape;
     shapeFromChars(shapes[orientation], rows, cols, shape);
-    piece.shapes[orientation] = shape;
+    this->shapes[orientation] = shape;
   }
+}
+
+shape_t Piece::getCurrentShape() {
+  return shapes[orientation];
+}
+
+void Piece::setCoordinates(point_t coordinates) {
+  this->coordinates = coordinates;
+}
+
+point_t Piece::getCoordinates() {
+  return coordinates;
+}
+
+shape_t Piece::shapeFacing(orientation_t orientation) {
+  return shapes[orientation];
+}
+
+shape_t Piece::shapeForClockwiseRotation() {
+  return shapes[nextClockwiseOrientation(orientation)];
+}
+
+shape_t Piece::shapeForAntiClockwiseRotation() {
+  return shapes[nextAntiClockwiseOrientation(orientation)];
+}
+
+void Piece::rotateClockwise() {
+  orientation = nextClockwiseOrientation(orientation);
+}
+
+void Piece::rotateAntiClockwise() {
+  orientation = nextAntiClockwiseOrientation(orientation);
 }
 
