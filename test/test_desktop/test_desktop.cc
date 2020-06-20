@@ -178,6 +178,69 @@ void test_bounding_box(void) {
   TEST_ASSERT_EQUAL(4, bbox.lRight.col);
 }
 
+void test_update_bounding_box(void) {
+  shape_t shape;
+  const char *empty = "    "
+                      "    "
+                      "    ";
+  shapeFromChars(empty, 3, 4, shape);
+  TEST_ASSERT_EQUAL(0, shape.bbox.uLeft.row);
+  TEST_ASSERT_EQUAL(0, shape.bbox.uLeft.col);
+  TEST_ASSERT_EQUAL(0, shape.bbox.lRight.row);
+  TEST_ASSERT_EQUAL(0, shape.bbox.lRight.col);
+
+  // Put a shape inside.
+  shape.grid[5] = 'x';
+  shape.grid[6] = 'x';
+  updateBoundingBox(shape);
+  TEST_ASSERT_EQUAL(1, shape.bbox.uLeft.row);
+  TEST_ASSERT_EQUAL(1, shape.bbox.uLeft.col);
+  TEST_ASSERT_EQUAL(1, shape.bbox.lRight.row);
+  TEST_ASSERT_EQUAL(2, shape.bbox.lRight.col);
+
+  // Remove the shape. It's empty again.
+  shape.grid[5] = ' ';
+  shape.grid[6] = ' ';
+  updateBoundingBox(shape);
+  TEST_ASSERT_EQUAL(0, shape.bbox.uLeft.row);
+  TEST_ASSERT_EQUAL(0, shape.bbox.uLeft.col);
+  TEST_ASSERT_EQUAL(0, shape.bbox.lRight.row);
+  TEST_ASSERT_EQUAL(0, shape.bbox.lRight.col);
+}
+
+void test_fill(void) {
+  shape_t shape;
+  shape_t fullShape;
+  const char *empty = "    "
+                      "    "
+                      "    ";
+  const char *full =  "cccc"
+                      "cccc"
+                      "cccc";
+
+  shapeFromChars(empty, 3, 4, shape);
+  shapeFromChars(full, 3, 4, fullShape);
+
+  // Initially, the bbox is empty because the shape has no visible contents.
+  TEST_ASSERT_EQUAL(4, shape.cols);
+  TEST_ASSERT_EQUAL(3, shape.rows);
+  TEST_ASSERT_EQUAL(0, shape.bbox.uLeft.col);
+  TEST_ASSERT_EQUAL(0, shape.bbox.uLeft.row);
+  TEST_ASSERT_EQUAL(0, shape.bbox.lRight.col);
+  TEST_ASSERT_EQUAL(0, shape.bbox.lRight.row);
+  TEST_ASSERT_FALSE(shapesEqual(shape, fullShape));
+
+  fillShape(shape, 'c');
+  // After filling, the bbox is updated.
+  TEST_ASSERT_EQUAL(4, shape.cols);
+  TEST_ASSERT_EQUAL(3, shape.rows);
+  TEST_ASSERT_EQUAL(0, shape.bbox.uLeft.col);
+  TEST_ASSERT_EQUAL(0, shape.bbox.uLeft.row);
+  TEST_ASSERT_EQUAL(3, shape.bbox.lRight.col);
+  TEST_ASSERT_EQUAL(2, shape.bbox.lRight.row);
+  TEST_ASSERT_TRUE(shapesEqual(shape, fullShape));
+}
+
 void test_generate_shapes(void) {
   const char *shapes_J[] = {
     [UP] =    "J   JJJ         ",
@@ -333,26 +396,72 @@ void test_sequence(void) {
   TEST_ASSERT_EQUAL(Z, sequence.next());
 }
 
+void test_make_canvas(void) {
+  shape_t canvas;
+  makeCanvas(canvas);
+
+  TEST_ASSERT_EQUAL(20, canvas.rows);
+  TEST_ASSERT_EQUAL(10, canvas.cols);
+  for (uint8_t i = 0; i < 200; ++i) {
+    TEST_ASSERT_EQUAL(' ', canvas.grid[i]);
+  }
+}
+
+void test_new_game_renders_empty_canvas(void) {
+  shape_t canvas;
+  Sequence sequence = Sequence(0);
+
+  makeCanvas(canvas);
+  // Dirty the canvas with some pixels.
+  for (uint8_t i = 0; i < 200; ++i) {
+    canvas.grid[i] = 'x';
+  }
+
+  // Confirm that did what we think it did.
+  TEST_ASSERT_EQUAL(20, canvas.rows);
+  TEST_ASSERT_EQUAL(10, canvas.cols);
+
+  Game game = Game(canvas, sequence);
+  for (uint8_t i = 0; i < 200; ++i) {
+    TEST_ASSERT_EQUAL(' ', canvas.grid[i]);
+  }
+  TEST_ASSERT_EQUAL(20, canvas.rows);
+  TEST_ASSERT_EQUAL(10, canvas.cols);
+
+  // TODO: I don't think the bounding box is updated correctly.
+}
+
 int main(int argc, char** argv) {
   UNITY_BEGIN();
 
+  // board.h
   RUN_TEST(test_empty_rows);
   RUN_TEST(test_non_empty_rows);
 
+  // piece.h
   RUN_TEST(test_rotate_clockwise);
   RUN_TEST(test_rotate_anticlockwise);
 
+  // geom.h
   RUN_TEST(test_row_empty);
   RUN_TEST(test_col_empty);
   RUN_TEST(test_bounding_box_empty_grid);
   RUN_TEST(test_bounding_box);
+  RUN_TEST(test_update_bounding_box);
+  RUN_TEST(test_fill);
 
+  // board.h
   RUN_TEST(test_generate_shapes);
   RUN_TEST(test_in_bounds);
   RUN_TEST(test_collide);
   RUN_TEST(test_stick);
 
+  // sequence.h
   RUN_TEST(test_sequence);
+
+  // game.h
+  RUN_TEST(test_make_canvas);
+  RUN_TEST(test_new_game_renders_empty_canvas);
 
   UNITY_END();
 }

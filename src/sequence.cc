@@ -22,7 +22,7 @@ long Random::choice(long from, long to) {
 #endif
 }
 
-Sequence::Sequence(long seed) :random(seed) {
+Sequence::Sequence(long seed) : random(seed) {
   reshuffle();
 }
 
