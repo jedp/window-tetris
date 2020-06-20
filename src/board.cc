@@ -38,6 +38,9 @@ bool collide(shape_t board, shape_t shape, point_t dst) {
   if (dst.row >= board.rows) return false;
   if (dst.col >= board.cols) return false;
 
+  // If it's above the board's bounding box, don't do any hard work.
+  if (dst.row + shape.rows < board.bbox.uLeft.row) return false;
+
   for (int i = dst.row; i < (int)board.rows && i < (int)shape.rows + dst.row; ++i) {
     // We don't have off-screen collisions.
     if (i < 0) continue;
@@ -74,5 +77,7 @@ void stick(shape_t board, shape_t shape, point_t dst) {
       }
     }
   }
+
+  updateBoundingBox(board);
 }
 

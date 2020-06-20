@@ -1,5 +1,4 @@
 #include <stdint.h>
-#include "assert.h"
 #include "geom.h"
 #include "board.h"
 
@@ -61,18 +60,21 @@ void boundingBox(const char *grid, int rows, int cols, bbox_t &bbox) {
   bbox.lRight.col = _right;
 }
 
-void shapeFromChars(const char *grid, int rows, int cols, shape_t &shape) {
+void updateBoundingBox(shape_t &shape) {
+  boundingBox(shape.grid, shape.rows, shape.cols, shape.bbox);
+}
+
+void shapeFromChars(const char *chars, int rows, int cols, shape_t &shape) {
   bbox_t bbox;
   shape.rows = rows;
   shape.cols = cols;
   shape.grid = new char[rows * cols]();
 
   for (uint8_t i = 0; i < rows * cols; ++i) {
-    shape.grid[i] = grid[i];
+    shape.grid[i] = chars[i];
   }
 
-  boundingBox(shape.grid, rows, cols, bbox);
-  shape.bbox = bbox;
+  updateBoundingBox(shape);
 }
 
 bool shapesEqual(const shape_t shape1, const shape_t shape2) {
@@ -87,5 +89,16 @@ bool shapesEqual(const shape_t shape1, const shape_t shape2) {
     }
   }
   return true;
+}
+
+void fillShape(shape_t &shape, char c) {
+  for (uint8_t i = 0; i < shape.rows; ++i) {
+    for (uint8_t j = 0; j < shape.cols; ++j) {
+      shape.grid[i * shape.cols + j] = c;
+    }
+  }
+
+  // Re-compute bounding box when changing contents of shape.
+  updateBoundingBox(shape);
 }
 
