@@ -253,9 +253,6 @@ void test_generate_shapes(void) {
   piece_t piece;
   generateFromShapes(shapes_J, rows, cols, piece);
 
-  TEST_ASSERT_EQUAL(4, piece.rows);
-  TEST_ASSERT_EQUAL(4, piece.cols);
-
   TEST_ASSERT_EQUAL(4, piece.shapes[UP].rows);
   TEST_ASSERT_EQUAL(4, piece.shapes[UP].cols);
   TEST_ASSERT_EQUAL(0, piece.shapes[UP].bbox.uLeft.row);

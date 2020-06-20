@@ -25,8 +25,8 @@ typedef enum PieceName {
 } piece_name_t;
 
 typedef struct piece_t {
-  uint8_t rows;
-  uint8_t cols;
+  point_t coordinates;
+  orientation_t currentShape;
   shape_t shapes[4];
 } piece_t;
 

@@ -12,9 +12,6 @@ orientation_t rotateAntiClockwise(orientation_t from) {
 }
 
 void generateFromShapes(const char **shapes, int rows, int cols, piece_t &piece) {
-  piece.rows = rows;
-  piece.cols = cols;
-
   for (uint8_t orientation = UP; orientation <= LEFT; ++orientation) {
     shape_t shape;
     shapeFromChars(shapes[orientation], rows, cols, shape);
