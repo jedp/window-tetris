@@ -22,13 +22,14 @@ void makeCanvas(Shape &canvas);
 class Game {
 
   public:
-    Game(const Shape &canvas, const Sequence &sequence);
-    uint32_t getScore();
+    Game(const Shape &canvas, const Sequence &sequence, void (*gameOverCallback)());
     move_result_t move(orientation_t movement);
     move_result_t rotate(orientation_t rotationDirection);
     move_result_t tick();
 
   private:
+    uint32_t getScore() const { return score; }
+    void (*gameOverCallback)();
     Piece pieces[NUM_PIECES];
     Piece *currentPiece;
     Shape board;
@@ -38,4 +39,5 @@ class Game {
     void produceNextPiece();
     void render();
     void reset();
+    void gameOver();
 };

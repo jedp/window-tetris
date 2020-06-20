@@ -2,22 +2,6 @@
 #include "geom.h"
 #include "board.h"
 
-uint8_t Shape::getRows() {
-  return rows;
-}
-
-uint8_t Shape::getCols() {
-  return cols;
-}
-
-bbox_t Shape::getBBox() {
-  return bbox;
-}
-
-char* Shape::getGrid() {
-  return grid;
-}
-
 void Shape::setWithChar(char c, int rows, int cols) {
   this->rows = rows;
   this->cols = cols;
@@ -54,6 +38,34 @@ void Shape::fillWith(char fillChar) {
   }
 
   updateBoundingBox();
+}
+
+/**
+ * Return true if the other shape would collide with us if place at point
+ * dst in our coordinate space; false otherwise.
+ */
+bool Shape::collides(const Shape &other, point_t dst) {
+  if (dst.row >= rows) return false;
+  if (dst.col >= cols) return false;
+
+  // If it's above the our bounding box, don't do any hard work.
+  if (dst.row + other.getRows() < bbox.uLeft.row) return false;
+
+  for (int i = dst.row; i < (int)rows && i < (int)other.getRows() + dst.row; ++i) {
+    if (i < 0) continue;
+
+    for (int j = dst.col; j < (int)cols && j < (int)other.getCols() + dst.col; ++j) {
+      if (j < 0) continue;
+
+      // i and j are in our coordinate space.
+      // Offset to get the local coordinate in the shape.
+      if (other.getGrid()[(i - dst.row) * other.getCols() + (j - dst.col)] != ' '
+          && grid[i * cols + j] != ' ') {
+        return true;
+      }
+    }
+  }
+  return false;
 }
 
 /**

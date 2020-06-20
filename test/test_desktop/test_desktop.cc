@@ -73,6 +73,9 @@ const char *board1_grid =
   "ILLLTTZZII"
   "IOOSTIZZII";
 
+void emptyCallback() {
+}
+
 void test_empty_rows(void) {
   int start = -2;
   int end = -2;
@@ -321,24 +324,24 @@ void test_collide(void) {
   shape.setFromChars(shape_chars, 2, 2);
 
   // Valid, all-on-screen placement.
-  TEST_ASSERT_FALSE(collide(board, shape, (struct point) { 0, 0 }));
+  TEST_ASSERT_FALSE(board.collides(shape, (struct point) { 0, 0 }));
 
   // Part of the shape is off the screen. That's ok.
-  TEST_ASSERT_FALSE(collide(board, shape, (struct point) { 0, -1 }));
-  TEST_ASSERT_FALSE(collide(board, shape, (struct point) { -1, -1 }));
+  TEST_ASSERT_FALSE(board.collides(shape, (struct point) { 0, -1 }));
+  TEST_ASSERT_FALSE(board.collides(shape, (struct point) { -1, -1 }));
 
   // Bottom tip overlaps.
-  TEST_ASSERT_TRUE(collide(board, shape, (struct point) { 2, 0 }));
+  TEST_ASSERT_TRUE(board.collides(shape, (struct point) { 2, 0 }));
 
   // Top overlaps.
-  TEST_ASSERT_TRUE(collide(board, shape, (struct point) { 3, 1 }));
+  TEST_ASSERT_TRUE(board.collides(shape, (struct point) { 3, 1 }));
 
   // Top and bottom overlap.
-  TEST_ASSERT_TRUE(collide(board, shape, (struct point) { 4, -1 }));
-  TEST_ASSERT_TRUE(collide(board, shape, (struct point) { 4, 0 }));
+  TEST_ASSERT_TRUE(board.collides(shape, (struct point) { 4, -1 }));
+  TEST_ASSERT_TRUE(board.collides(shape, (struct point) { 4, 0 }));
 
   // Hidden under the lip of the thing.
-  TEST_ASSERT_FALSE(collide(board, shape, (struct point) { 4, 1 }));
+  TEST_ASSERT_FALSE(board.collides(shape, (struct point) { 4, 1 }));
 }
 
 void test_stick(void) {
@@ -414,7 +417,7 @@ void test_new_game_renders_empty_canvas(void) {
   TEST_ASSERT_EQUAL(20, canvas.getRows());
   TEST_ASSERT_EQUAL(10, canvas.getCols());
 
-  Game game = Game(canvas, sequence);
+  Game game = Game(canvas, sequence, emptyCallback);
   for (uint8_t i = 0; i < 200; ++i) {
     TEST_ASSERT_EQUAL(' ', canvas.getGrid()[i]);
   }

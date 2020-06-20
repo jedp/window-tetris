@@ -34,29 +34,3 @@ bool inBounds(Shape board, Shape shape, point_t dst) {
   return true;
 }
 
-bool collide(Shape board, Shape shape, point_t dst) {
-  if (dst.row >= board.getRows()) return false;
-  if (dst.col >= board.getCols()) return false;
-
-  // If it's above the board's bounding box, don't do any hard work.
-  if (dst.row + shape.getRows() < board.getBBox().uLeft.row) return false;
-
-  for (int i = dst.row; i < (int)board.getRows() && i < (int)shape.getRows() + dst.row; ++i) {
-    // We don't have off-screen collisions.
-    if (i < 0) continue;
-
-    for (int j = dst.col; j < (int)board.getCols() && j < (int)shape.getCols() + dst.col; ++j) {
-      // We don't have off-screen collisions.
-      if (j < 0) continue;
-
-      // i and j are in grid space.
-      // Offset to get the local coordinate in the shape.
-      if (shape.getGrid()[(i - dst.row) * shape.getCols() + (j - dst.col)] != ' '
-          && board.getGrid()[i * board.getCols() + j] != ' ') {
-        return true;
-      }
-    }
-  }
-  return false;
-}
-

@@ -2,6 +2,7 @@
 #include <geom.h>
 
 const char EMPTY_SPACE = ' ';
+const point_t START_COORDINATES = { 1, 3 };
 
 const char *PIECE_I[] = {
   [UP] =    "    IIII        ",
@@ -56,9 +57,14 @@ void makeCanvas(Shape &canvas) {
   canvas.setWithChar(EMPTY_SPACE, H_BOARD, W_BOARD);
 }
 
-Game::Game(const Shape &canvas, const Sequence &sequence)
-  : canvas(canvas),
+Game::Game(
+    const Shape &canvas,
+    const Sequence &sequence,
+    void (*gameOverCallback)()
+) : canvas(canvas),
     sequence(sequence) {
+
+  this->gameOverCallback = gameOverCallback;
 
   // Generate all shapes, which are constant and immutable.
   pieces[I].generateFromShapes(PIECE_I, 4, 4);
@@ -75,11 +81,14 @@ Game::Game(const Shape &canvas, const Sequence &sequence)
   reset();
 }
 
-uint32_t Game::getScore() {
-  return score;
-}
-
 void Game::produceNextPiece() {
+  currentPiece = &pieces[sequence.next()];
+
+  if (board.collides((*currentPiece).getCurrentShape(), START_COORDINATES)) {
+    gameOver();
+  }
+
+  currentPiece->setCoordinates(START_COORDINATES);
 }
 
 void Game::render() {
@@ -96,3 +105,6 @@ void Game::reset() {
   render();
 }
 
+void Game::gameOver() {
+  gameOverCallback();
+}
