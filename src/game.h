@@ -19,9 +19,6 @@ const bbox_t BOARD_AREA = (struct bbox) {
   (struct point) { H_BOARD - 1, W_BOARD - 1}
 };
 
-
-
-
 typedef enum {
   STILL_ALIVE,
   NOT_STILL_ALIVE,
@@ -34,7 +31,7 @@ class Game {
     bool moveLeft();
     bool moveRight();
     bool rotateClockwise();
-    move_result_t tick();
+    void tick();
 
   private:
     uint32_t getScore() const { return score; }

@@ -2,7 +2,6 @@
 #include <stdint.h>
 #include <shape.h>
 #include <piece.h>
-#include <iostream>
 
 orientation_t nextClockwiseOrientation(orientation_t from) {
   return orientation_t((from + 1) % NUM_ORIENTATIONS);

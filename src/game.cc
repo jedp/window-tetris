@@ -1,14 +1,15 @@
 #include <assert.h>
 #include <game.h>
 #include <shape.h>
+#include <assert.h>
 
 Game::Game(
     const Shape &canvas,
     const Sequence &sequence)
- : sequence(sequence),
+ : canvas(canvas),
+   sequence(sequence),
    currentPieceName(I),
    currentOrientation(UP),
-   canvas(canvas),
    board(Shape(20, 10, "                                                                                                                                                                                                        ")),
    pieces{
      [I] = Piece(4, 4,
@@ -77,12 +78,24 @@ bool Game::moveRight() {
 }
 
 bool Game::move(orientation_t dir) {
-  assert(dir == LEFT || dir == RIGHT);
+  assert(dir == LEFT || dir == RIGHT || dir == DOWN);
   point_t dst;
-  dst.row = pieces[currentPieceName].getCoordinates().row;
-  dst.col = dir == RIGHT
-    ? pieces[currentPieceName].getCoordinates().col + 1
-    : pieces[currentPieceName].getCoordinates().col - 1;
+  switch (dir) {
+    case RIGHT:
+      dst.row = pieces[currentPieceName].getCoordinates().row;
+      dst.col = pieces[currentPieceName].getCoordinates().col + 1;
+      break;
+    case LEFT:
+      dst.row = pieces[currentPieceName].getCoordinates().row;
+      dst.col = pieces[currentPieceName].getCoordinates().col - 1;
+      break;
+    case DOWN:
+      dst.row = pieces[currentPieceName].getCoordinates().row + 1;
+      dst.col = pieces[currentPieceName].getCoordinates().col;
+      break;
+    default:
+      assert(false);
+  }
 
   if (!pieces[currentPieceName].getCurrentShape().within(BOARD_AREA, dst)) {
     return false;
@@ -100,24 +113,37 @@ bool Game::move(orientation_t dir) {
 }
 
 bool Game::rotateClockwise() {
-  if (!pieces[currentPieceName].shapeForClockwiseRotation().within(BOARD_AREA, pieces[currentPieceName].getCoordinates())) {
+  if (!pieces[currentPieceName]
+        .shapeForClockwiseRotation()
+        .within(BOARD_AREA,
+                pieces[currentPieceName].getCoordinates())) {
     return false;
   }
-  if (board.collides(pieces[currentPieceName].shapeForClockwiseRotation(), pieces[currentPieceName].getCoordinates())) {
+  if (board.collides(pieces[currentPieceName].shapeForClockwiseRotation(),
+                     pieces[currentPieceName].getCoordinates())) {
     return false;
   }
 
   pieces[currentPieceName].rotateClockwise();
 
-  return true;
-
   render();
+
+  return true;
+}
+
+void Game::tick() {
+  if (!move(DOWN)) {
+    board.drop(pieces[currentPieceName].getCurrentShape(),
+               pieces[currentPieceName].getCoordinates());
+    produceNextPiece();
+  }
 }
 
 void Game::produceNextPiece() {
   currentPieceName = sequence.next();
 
-  if (board.collides(pieces[currentPieceName].getCurrentShape(), START_COORDINATES)) {
+  if (board.collides(pieces[currentPieceName].getCurrentShape(),
+                     START_COORDINATES)) {
     gameOver();
   }
 

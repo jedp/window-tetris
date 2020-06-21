@@ -1,7 +1,6 @@
 
 #include <shape.h>
 #include <board.h>
-#include <iostream>
 
 Shape::Shape(int rows, int cols, const char *chars)
  : rows(rows),
