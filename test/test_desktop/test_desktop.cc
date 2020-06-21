@@ -2,7 +2,6 @@
 #include <piece.h>
 #include <shape.h>
 #include <game.h>
-#include <constants.h>
 #include <sequence.h>
 #include <unity.h>
 #include "test_desktop_data.h"
@@ -254,7 +253,7 @@ void test_collide(void) {
   TEST_ASSERT_FALSE(board.collides(shape, (struct point) { 4, 1 }));
 }
 
-void test_drop(void) {
+void test_stick(void) {
   const char *board_chars = "    "
                             "    "
                             "    "
@@ -266,7 +265,7 @@ void test_drop(void) {
   Shape board = Shape(6, 4, board_chars);
   Shape shape = Shape(2, 2, shape_chars);
 
-  board.drop(shape, (struct point) { 4, 1 });
+  board.stick(shape, (struct point) { 4, 1 });
 
   // This is what it looks like after sticking.
   const char *stuck_chars = "    "
@@ -279,7 +278,7 @@ void test_drop(void) {
   TEST_ASSERT_TRUE(board == expected);
 }
 
-void test_drop_at_edge(void) {
+void test_stick_at_edge(void) {
     const char *board_chars = "    "
                             "    "
                             "    "
@@ -291,7 +290,7 @@ void test_drop_at_edge(void) {
   Shape board = Shape(6, 4, board_chars);
   Shape shape = Shape(2, 3, shape_chars);
 
-  board.drop(shape, (struct point) { 4, -2 });
+  board.stick(shape, (struct point) { 4, -2 });
 
   // This is what it looks like after sticking.
   const char *stuck_chars = "    "
@@ -465,6 +464,25 @@ void test_game_rotate_clockwise(void) {
   TEST_ASSERT_TRUE(canvas == Shape(20, 10, board_with_first_piece));
 }
 
+void test_drop(void) {
+  Shape canvas = Shape(20, 10, board_empty_grid);
+  Sequence sequence = Sequence(0);
+  Game game = Game(canvas, sequence);
+
+  TEST_ASSERT_TRUE(canvas == Shape(20, 10, board_with_first_piece));
+
+  game.moveLeft();
+  game.moveLeft();
+  game.moveLeft();
+  game.drop();
+  Shape expected = Shape(20, 10, board_with_first_piece_far_left_dropped_new_piece_showing);
+  TEST_ASSERT_TRUE(canvas == expected);
+  game.drop();
+
+  Shape expected2 = Shape(20, 10, board_with_second_piece_dropped);
+  TEST_ASSERT_TRUE(canvas == expected2);
+}
+
 int main(int argc, char** argv) {
   UNITY_BEGIN();
 
@@ -488,8 +506,8 @@ int main(int argc, char** argv) {
   RUN_TEST(test_generate_shapes);
   RUN_TEST(test_in_bounds);
   RUN_TEST(test_collide);
-  RUN_TEST(test_drop);
-  RUN_TEST(test_drop_at_edge);
+  RUN_TEST(test_stick);
+  RUN_TEST(test_stick_at_edge);
 
   // sequence.h
   RUN_TEST(test_sequence);
@@ -503,6 +521,7 @@ int main(int argc, char** argv) {
   RUN_TEST(test_move_left_then_tick);
   RUN_TEST(test_move_left_then_tick_down_see_new_piece);
   RUN_TEST(test_game_rotate_clockwise);
+  RUN_TEST(test_drop);
 
   UNITY_END();
 }

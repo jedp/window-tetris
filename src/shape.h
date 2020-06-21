@@ -34,7 +34,7 @@ class Shape {
     void fillWith(char fillChar);
     bool within(bbox_t bbox, point_t dst);
     bool collides(const Shape &other, point_t dst);
-    void drop(const Shape &other, point_t dst);
+    void stick(const Shape &other, point_t dst);
     void updateBoundingBox();
     bool operator==(const Shape &other);
 

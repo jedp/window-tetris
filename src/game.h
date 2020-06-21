@@ -31,6 +31,7 @@ class Game {
     bool moveLeft();
     bool moveRight();
     bool rotateClockwise();
+    void drop();
     void tick();
 
   private:
