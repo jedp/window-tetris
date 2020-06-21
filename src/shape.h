@@ -24,22 +24,23 @@ typedef struct bbox {
 class Shape {
 
   public:
-    uint8_t getRows() const { return rows; }
-    uint8_t getCols() const { return cols; }
+    Shape(int rows, int cols, const char *chars);
+    int getRows() const { return rows; }
+    int getCols() const { return cols; }
     char *getGrid() const { return grid; }
     bbox_t getBBox() const { return bbox; }
-    void setWithChar(char c, int rows, int cols);
-    void setFromChars(const char *chars, int rows, int cols);
     void setCharAt(char c, point_t coordinates);
+    void fillWithChars(const char *chars);
     void fillWith(char fillChar);
+    bool within(bbox_t bbox, point_t dst);
     bool collides(const Shape &other, point_t dst);
     void drop(const Shape &other, point_t dst);
     void updateBoundingBox();
     bool operator==(const Shape &other);
 
   private:
-    uint8_t rows;
-    uint8_t cols;
+    int rows;
+    int cols;
     bbox_t bbox;
     char *grid;
 };

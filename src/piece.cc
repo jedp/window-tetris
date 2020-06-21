@@ -1,27 +1,30 @@
 #include <stdbool.h>
 #include <stdint.h>
-#include "geom.h"
-#include "piece.h"
+#include <shape.h>
+#include <piece.h>
+#include <iostream>
 
 orientation_t nextClockwiseOrientation(orientation_t from) {
-  return orientation_t((from + 1) % 4);
+  return orientation_t((from + 1) % NUM_ORIENTATIONS);
 }
 
 orientation_t nextAntiClockwiseOrientation(orientation_t from) {
-  return orientation_t((from + 3) % 4);
+  return orientation_t((from + 3) % NUM_ORIENTATIONS);
 }
 
-Piece::Piece()
-  : coordinates((struct point) { 0, 0 })
+Piece::Piece(
+    int rows,
+    int cols,
+    Shape up,
+    Shape right,
+    Shape down,
+    Shape left)
+  : rows(rows),
+    cols(cols),
+    shapes { up, right, down, left },
+    orientation(UP),
+    coordinates((struct point) { 0, 0 })
 {
-}
-
-void Piece::generateFromShapes(const char **shapes, int rows, int cols) {
-  for (uint8_t orientation = UP; orientation <= LEFT; ++orientation) {
-    Shape shape;
-    shape.setFromChars(shapes[orientation], rows, cols);
-    this->shapes[orientation] = shape;
-  }
 }
 
 Shape Piece::getCurrentShape() {

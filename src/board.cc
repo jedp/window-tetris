@@ -4,7 +4,7 @@
 #include "game.h"
 
 bool noEmptySpacesInRange(const char *grid, int start, int end) {
-  for (uint8_t j = start; j < end; ++j) {
+  for (int j = start; j < end; ++j) {
     if (grid[j] == ' ') {
       return false;
     }
@@ -15,7 +15,7 @@ bool noEmptySpacesInRange(const char *grid, int start, int end) {
 void getFullRowsRange(const char *board, int &start, int &end) {
   int _start = -1;
   int _end = -1;
-  for (uint8_t i = 0; i < H_BOARD; ++i) {
+  for (int i = 0; i < H_BOARD; ++i) {
     if (noEmptySpacesInRange(board, i * W_BOARD, i * W_BOARD + W_BOARD)) {
       if (_start == -1) _start = i * W_BOARD;
       _end = i * W_BOARD + W_BOARD;

@@ -12,32 +12,43 @@ const int H_PIECE = 4;
 const int START_ROW = 2;
 const int START_COL = 4;
 
+const char EMPTY_SPACE = ' ';
+const point_t START_COORDINATES = (struct point) { 0, 3 };
+const bbox_t BOARD_AREA = (struct bbox) {
+  (struct point) { 0, 0 },
+  (struct point) { H_BOARD - 1, W_BOARD - 1}
+};
+
+
+
+
 typedef enum {
   STILL_ALIVE,
   NOT_STILL_ALIVE,
 } move_result_t;
 
-void makeCanvas(Shape &canvas);
-
 class Game {
 
   public:
-    Game(const Shape &canvas, const Sequence &sequence, void (*gameOverCallback)());
-    move_result_t move(orientation_t movement);
-    move_result_t rotate(orientation_t rotationDirection);
+    Game(const Shape &canvas, const Sequence &sequence);
+    bool moveLeft();
+    bool moveRight();
+    bool rotateClockwise();
     move_result_t tick();
 
   private:
     uint32_t getScore() const { return score; }
-    void (*gameOverCallback)();
-    Piece pieces[NUM_PIECES];
-    Piece *currentPiece;
-    Shape board;
-    Shape canvas;
+    piece_name_t currentPieceName;
+    orientation_t currentOrientation;
     Sequence sequence;
+    Shape canvas;
+    Shape board;
+    Piece pieces[NUM_PIECES];
     uint32_t score;
+    bool move(orientation_t dir);
     void produceNextPiece();
     void render();
     void reset();
     void gameOver();
 };
+
