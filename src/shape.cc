@@ -1,4 +1,3 @@
-
 #include <shape.h>
 #include <board.h>
 
@@ -79,7 +78,7 @@ bool Shape::collides(const Shape &other, point_t dst) {
  *
  * The destination point is in board space.
  */
-void Shape::drop(const Shape &other, point_t dst) {
+void Shape::stick(const Shape &other, point_t dst) {
   for (int i = dst.row; i < (int)rows && i < (int)other.getRows() + dst.row; ++i) {
     if (i < 0) continue;
 

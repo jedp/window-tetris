@@ -216,6 +216,28 @@ const char *board_with_first_piece_far_left_dropped_new_piece_showing =
   "          "
   "IIII      ";
 
+const char *board_with_second_piece_dropped =
+  "     L    "
+  "   LLL    "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "   J      "
+  "   JJJ    "
+  "IIII      ";
+
 const char *board_with_first_piece_far_right =
   "          "
   "      IIII"

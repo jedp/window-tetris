@@ -3,6 +3,8 @@
 #include <shape.h>
 #include <assert.h>
 
+// Reference for pieces: https://tetris.fandom.com/wiki/Orientation
+
 Game::Game(
     const Shape &canvas,
     const Sequence &sequence)
@@ -131,9 +133,17 @@ bool Game::rotateClockwise() {
   return true;
 }
 
+void Game::drop() {
+  while(move(DOWN)) ;
+
+  board.stick(pieces[currentPieceName].getCurrentShape(),
+             pieces[currentPieceName].getCoordinates());
+  produceNextPiece();
+}
+
 void Game::tick() {
   if (!move(DOWN)) {
-    board.drop(pieces[currentPieceName].getCurrentShape(),
+    board.stick(pieces[currentPieceName].getCurrentShape(),
                pieces[currentPieceName].getCoordinates());
     produceNextPiece();
   }
@@ -154,8 +164,8 @@ void Game::produceNextPiece() {
 
 void Game::render() {
   canvas.fillWith(EMPTY_SPACE);
-  canvas.drop(board, (struct point) { 0, 0});
-  canvas.drop(pieces[currentPieceName].getCurrentShape(), pieces[currentPieceName].getCoordinates());
+  canvas.stick(board, (struct point) { 0, 0});
+  canvas.stick(pieces[currentPieceName].getCurrentShape(), pieces[currentPieceName].getCoordinates());
   canvas.updateBoundingBox();
 }
 
