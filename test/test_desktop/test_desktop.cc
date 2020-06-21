@@ -395,6 +395,76 @@ void test_move_right(void) {
   TEST_ASSERT_TRUE(canvas == expected);
 }
 
+void test_move_left_then_tick(void) {
+  Shape canvas = Shape(20, 10, board_empty_grid);
+  Sequence sequence = Sequence(0);
+  Game game = Game(canvas, sequence);
+
+  // Move all the way to the edge of the board and stop when you run into it.
+  TEST_ASSERT_TRUE(game.moveLeft());
+  TEST_ASSERT_TRUE(game.moveLeft());
+  TEST_ASSERT_TRUE(game.moveLeft());
+  TEST_ASSERT_FALSE(game.moveLeft());
+
+  game.tick();
+  Shape expected = Shape(20, 10, board_with_first_piece_far_left_dropped_1);
+  TEST_ASSERT_TRUE(canvas == expected);
+}
+
+void test_move_left_then_tick_down_see_new_piece() {
+  Shape canvas = Shape(20, 10, board_empty_grid);
+  Sequence sequence = Sequence(0);
+  Game game = Game(canvas, sequence);
+
+  // Move all the way to the edge of the board and stop when you run into it.
+  TEST_ASSERT_TRUE(game.moveLeft());
+  TEST_ASSERT_TRUE(game.moveLeft());
+  TEST_ASSERT_TRUE(game.moveLeft());
+  TEST_ASSERT_FALSE(game.moveLeft());
+
+  game.tick();
+  game.tick();
+  game.tick();
+  game.tick();
+  game.tick();
+  game.tick();
+  game.tick();
+  game.tick();
+  game.tick();
+  game.tick();
+  game.tick();
+  game.tick();
+  game.tick();
+  game.tick();
+  game.tick();
+  game.tick();
+  game.tick();
+  game.tick();
+  Shape expected = Shape(20, 10, board_with_first_piece_far_left_dropped_entirely);
+  TEST_ASSERT_TRUE(canvas == expected);
+
+  // The piece is stuck now. New piece emerges.
+  game.tick();
+  Shape expected2 = Shape(20, 10, board_with_first_piece_far_left_dropped_new_piece_showing);
+  TEST_ASSERT_TRUE(canvas == expected2);
+}
+
+void test_game_rotate_clockwise(void) {
+  Shape canvas = Shape(20, 10, board_empty_grid);
+  Sequence sequence = Sequence(0);
+  Game game = Game(canvas, sequence);
+
+  TEST_ASSERT_TRUE(canvas == Shape(20, 10, board_with_first_piece));
+  TEST_ASSERT_TRUE(game.rotateClockwise());
+  TEST_ASSERT_TRUE(canvas == Shape(20, 10, board_with_first_piece_r1));
+  TEST_ASSERT_TRUE(game.rotateClockwise());
+  TEST_ASSERT_TRUE(canvas == Shape(20, 10, board_with_first_piece_r2));
+  TEST_ASSERT_TRUE(game.rotateClockwise());
+  TEST_ASSERT_TRUE(canvas == Shape(20, 10, board_with_first_piece_r3));
+  TEST_ASSERT_TRUE(game.rotateClockwise());
+  TEST_ASSERT_TRUE(canvas == Shape(20, 10, board_with_first_piece));
+}
+
 int main(int argc, char** argv) {
   UNITY_BEGIN();
 
@@ -430,6 +500,9 @@ int main(int argc, char** argv) {
   RUN_TEST(test_new_game_renders_first_piece);
   RUN_TEST(test_move_left);
   RUN_TEST(test_move_right);
+  RUN_TEST(test_move_left_then_tick);
+  RUN_TEST(test_move_left_then_tick_down_see_new_piece);
+  RUN_TEST(test_game_rotate_clockwise);
 
   UNITY_END();
 }
