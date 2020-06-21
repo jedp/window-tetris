@@ -6,6 +6,9 @@
 #include <unity.h>
 #include "test_desktop_data.h"
 
+void noOpCallback() {
+}
+
 void test_empty_rows(void) {
   int start = -2;
   int end = -2;
@@ -341,7 +344,7 @@ void test_new_game_renders_empty_canvas(void) {
   canvas.fillWith('x');
 
   Sequence sequence = Sequence(0);
-  Game game = Game(canvas, sequence);
+  Game game = Game(canvas, sequence, noOpCallback);
 
   // First and last squares are blank.
   TEST_ASSERT_EQUAL(' ', canvas.getGrid()[0]);
@@ -354,7 +357,7 @@ void test_new_game_renders_empty_canvas(void) {
 void test_new_game_renders_first_piece(void) {
   Shape canvas = Shape(20, 10, board_empty_grid);
 
-  Game game = Game(canvas, Sequence(0));
+  Game game = Game(canvas, Sequence(0), noOpCallback);
 
   // First piece has been dropped.
   Shape expected = Shape(20, 10, board_with_first_piece);
@@ -365,7 +368,7 @@ void test_new_game_renders_first_piece(void) {
 void test_move_left(void) {
   Shape canvas = Shape(20, 10, board_empty_grid);
   Sequence sequence = Sequence(0);
-  Game game = Game(canvas, sequence);
+  Game game = Game(canvas, sequence, noOpCallback);
 
   // Move all the way to the edge of the board and stop when you run into it.
   TEST_ASSERT_TRUE(game.moveLeft());
@@ -381,7 +384,7 @@ void test_move_left(void) {
 void test_move_right(void) {
   Shape canvas = Shape(20, 10, board_empty_grid);
   Sequence sequence = Sequence(0);
-  Game game = Game(canvas, sequence);
+  Game game = Game(canvas, sequence, noOpCallback);
 
   // Move all the way to the edge of the board and stop when you run into it.
   TEST_ASSERT_TRUE(game.moveRight());
@@ -397,7 +400,7 @@ void test_move_right(void) {
 void test_move_left_then_tick(void) {
   Shape canvas = Shape(20, 10, board_empty_grid);
   Sequence sequence = Sequence(0);
-  Game game = Game(canvas, sequence);
+  Game game = Game(canvas, sequence, noOpCallback);
 
   // Move all the way to the edge of the board and stop when you run into it.
   TEST_ASSERT_TRUE(game.moveLeft());
@@ -413,7 +416,7 @@ void test_move_left_then_tick(void) {
 void test_move_left_then_tick_down_see_new_piece() {
   Shape canvas = Shape(20, 10, board_empty_grid);
   Sequence sequence = Sequence(0);
-  Game game = Game(canvas, sequence);
+  Game game = Game(canvas, sequence, noOpCallback);
 
   // Move all the way to the edge of the board and stop when you run into it.
   TEST_ASSERT_TRUE(game.moveLeft());
@@ -451,7 +454,7 @@ void test_move_left_then_tick_down_see_new_piece() {
 void test_game_rotate_clockwise(void) {
   Shape canvas = Shape(20, 10, board_empty_grid);
   Sequence sequence = Sequence(0);
-  Game game = Game(canvas, sequence);
+  Game game = Game(canvas, sequence, noOpCallback);
 
   TEST_ASSERT_TRUE(canvas == Shape(20, 10, board_with_first_piece));
   TEST_ASSERT_TRUE(game.rotateClockwise());
@@ -467,7 +470,7 @@ void test_game_rotate_clockwise(void) {
 void test_drop(void) {
   Shape canvas = Shape(20, 10, board_empty_grid);
   Sequence sequence = Sequence(0);
-  Game game = Game(canvas, sequence);
+  Game game = Game(canvas, sequence, noOpCallback);
 
   TEST_ASSERT_TRUE(canvas == Shape(20, 10, board_with_first_piece));
 

@@ -27,7 +27,9 @@ typedef enum {
 class Game {
 
   public:
-    Game(const Shape &canvas, const Sequence &sequence);
+    Game(const Shape &canvas,
+         const Sequence &sequence,
+         void gameOverCallback(void));
     bool moveLeft();
     bool moveRight();
     bool rotateClockwise();

@@ -7,7 +7,8 @@
 
 Game::Game(
     const Shape &canvas,
-    const Sequence &sequence)
+    const Sequence &sequence,
+    void gameOverCallback(void))
  : canvas(canvas),
    sequence(sequence),
    currentPieceName(I),
