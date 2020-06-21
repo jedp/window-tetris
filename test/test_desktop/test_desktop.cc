@@ -1,102 +1,11 @@
 #include <board.h>
 #include <piece.h>
-#include <geom.h>
+#include <shape.h>
 #include <game.h>
 #include <constants.h>
 #include <sequence.h>
 #include <unity.h>
-
-const char *board_empty_grid =
-  "          "
-  "          "
-  "          "
-  "          "
-  "          "
-  "          "
-  "          "
-  "          "
-  "          "
-  "          "
-  "          "
-  "          "
-  "          "
-  "          "
-  "          "
-  "          "
-  "          "
-  "          "
-  "          "
-  "          ";
-
-const char *board_with_first_piece =
-  "          "
-  "   IIII   "
-  "          "
-  "          "
-  "          "
-  "          "
-  "          "
-  "          "
-  "          "
-  "          "
-  "          "
-  "          "
-  "          "
-  "          "
-  "          "
-  "          "
-  "          "
-  "          "
-  "          "
-  "          ";
-
-
-const char *board0_grid =
-  "          "
-  "          "
-  "          "
-  "          "
-  "          "
-  "          "
-  "          "
-  "          "
-  "          "
-  "          "
-  "          "
-  "T  OOS    "
-  "TTZOOSS   "
-  "TZZTZZS   "
-  "SZLTTZZL  "
-  "SSLTOOJL  "
-  "JSLLOOJLL "
-  "JJJLTJJZI "
-  "ILLLTTZZI "
-  "IOOSTIZZI ";
-
-const char *board1_grid =
-  "          "
-  "          "
-  "          "
-  "          "
-  "          "
-  "          "
-  "          "
-  "          "
-  "          "
-  "          "
-  "          "
-  "T  OOS    "
-  "TTZOOSS   "
-  "TZZTZZS   "
-  "SZLTTZZL  "
-  "SSLTOOJL  "
-  "JSLLOOJLLI"
-  "JJJLTJJZII"
-  "ILLLTTZZII"
-  "IOOSTIZZII";
-
-void emptyCallback() {
-}
+#include "test_desktop_data.h"
 
 void test_empty_rows(void) {
   int start = -2;
@@ -204,11 +113,7 @@ void test_bounding_box(void) {
 }
 
 void test_update_bounding_box(void) {
-  Shape shape;
-  const char *empty = "    "
-                      "    "
-                      "    ";
-  shape.setFromChars(empty, 3, 4);
+  Shape shape = Shape(3, 4, "            ");
   TEST_ASSERT_EQUAL(0, shape.getBBox().uLeft.row);
   TEST_ASSERT_EQUAL(0, shape.getBBox().uLeft.col);
   TEST_ASSERT_EQUAL(0, shape.getBBox().lRight.row);
@@ -232,17 +137,13 @@ void test_update_bounding_box(void) {
 }
 
 void test_fill(void) {
-  Shape shape;
-  Shape fullShape;
-  const char *empty = "    "
-                      "    "
-                      "    ";
+  Shape shape = Shape(3, 4, "            ");
+  Shape fullShape = Shape(3, 4, "            ");
   const char *full =  "cccc"
                       "cccc"
                       "cccc";
 
-  shape.setFromChars(empty, 3, 4);
-  fullShape.setFromChars(full, 3, 4);
+  fullShape.fillWithChars(full);
 
   // Initially, the bbox is empty because the shape has no visible contents.
   TEST_ASSERT_EQUAL(4, shape.getCols());
@@ -265,16 +166,11 @@ void test_fill(void) {
 }
 
 void test_generate_shapes(void) {
-  const char *shapes_J[] = {
-    [UP] =    "J   JJJ         ",
-    [RIGHT] = " JJ  J   J      ",
-    [DOWN] =  "    JJJ   J     ",
-    [LEFT] =  " J   J  JJ      "
-  };
-  int rows = 4;
-  int cols = 4;
-  Piece piece;
-  piece.generateFromShapes(shapes_J, rows, cols);
+  Shape J_UP =    Shape(4, 4, "J   JJJ         ");
+  Shape J_RIGHT = Shape(4, 4, " JJ  J   J      ");
+  Shape J_DOWN =  Shape(4, 4, "    JJJ   J     ");
+  Shape J_LEFT =  Shape(4, 4, " J   J  JJ      ");
+  Piece piece = Piece(4, 4, J_UP, J_RIGHT, J_DOWN, J_LEFT);
 
   TEST_ASSERT_EQUAL(4, piece.shapeFacing(UP).getRows());
   TEST_ASSERT_EQUAL(4, piece.shapeFacing(UP).getCols());
@@ -306,19 +202,13 @@ void test_generate_shapes(void) {
 }
 
 void test_in_bounds(void) {
-  const char *shapes_J[] = {
-    [UP] =    "J   JJJ         ",
-    [RIGHT] = " JJ  J   J      ",
-    [DOWN] =  "    JJJ   J     ",
-    [LEFT] =  " J   J  JJ      "
-  };
-  int rows = 4;
-  int cols = 4;
-  Piece piece;
-  piece.generateFromShapes(shapes_J, rows, cols);
+  Shape J_UP =    Shape(4, 4, "J   JJJ         ");
+  Shape J_RIGHT = Shape(4, 4, " JJ  J   J      ");
+  Shape J_DOWN =  Shape(4, 4, "    JJJ   J     ");
+  Shape J_LEFT =  Shape(4, 4, " J   J  JJ      ");
+  Piece piece = Piece(4, 4, J_UP, J_RIGHT, J_DOWN, J_LEFT);
 
-  Shape grid;
-  grid.setFromChars(board_empty_grid, 20, 10);
+  Shape grid = Shape(20, 10, board_empty_grid);
 
   TEST_ASSERT_TRUE(inBounds(grid, piece.shapeFacing(UP), (struct point) { 0, 0 }));
   TEST_ASSERT_TRUE(inBounds(grid, piece.shapeFacing(UP), (struct point) { 0, 8 }));
@@ -340,10 +230,8 @@ void test_collide(void) {
                             "xx  ";
   const char *shape_chars = " o"
                             " o";
-  Shape board;
-  Shape shape;
-  board.setFromChars(board_chars, 6, 4);
-  shape.setFromChars(shape_chars, 2, 2);
+  Shape board = Shape(6, 4, board_chars);
+  Shape shape = Shape(2, 2, shape_chars);
 
   // Valid, all-on-screen placement.
   TEST_ASSERT_FALSE(board.collides(shape, (struct point) { 0, 0 }));
@@ -366,7 +254,7 @@ void test_collide(void) {
   TEST_ASSERT_FALSE(board.collides(shape, (struct point) { 4, 1 }));
 }
 
-void test_stick(void) {
+void test_drop(void) {
   const char *board_chars = "    "
                             "    "
                             "    "
@@ -375,10 +263,8 @@ void test_stick(void) {
                             "xx  ";
   const char *shape_chars = " o"
                             " o";
-  Shape board;
-  Shape shape;
-  board.setFromChars(board_chars, 6, 4);
-  shape.setFromChars(shape_chars, 2, 2);
+  Shape board = Shape(6, 4, board_chars);
+  Shape shape = Shape(2, 2, shape_chars);
 
   board.drop(shape, (struct point) { 4, 1 });
 
@@ -389,8 +275,32 @@ void test_stick(void) {
                             "xxx "
                             "xxo "
                             "xxo ";
-  Shape expected;
-  expected.setFromChars(stuck_chars, 6, 4);
+  Shape expected = Shape(6, 4, stuck_chars);
+  TEST_ASSERT_TRUE(board == expected);
+}
+
+void test_drop_at_edge(void) {
+    const char *board_chars = "    "
+                            "    "
+                            "    "
+                            " xx "
+                            " x  "
+                            " x  ";
+  const char *shape_chars = "  o"
+                            "  o";
+  Shape board = Shape(6, 4, board_chars);
+  Shape shape = Shape(2, 3, shape_chars);
+
+  board.drop(shape, (struct point) { 4, -2 });
+
+  // This is what it looks like after sticking.
+  const char *stuck_chars = "    "
+                            "    "
+                            "    "
+                            " xx "
+                            "ox  "
+                            "ox  ";
+  Shape expected = Shape(6, 4, stuck_chars);
   TEST_ASSERT_TRUE(board == expected);
 }
 
@@ -417,46 +327,71 @@ void test_sequence(void) {
 }
 
 void test_make_canvas(void) {
-  Shape canvas;
-  makeCanvas(canvas);
+  Shape canvas = Shape(20, 10, board_empty_grid);
 
   TEST_ASSERT_EQUAL(20, canvas.getRows());
   TEST_ASSERT_EQUAL(10, canvas.getCols());
-  for (uint8_t i = 0; i < 200; ++i) {
+  for (int i = 0; i < 200; ++i) {
     TEST_ASSERT_EQUAL(' ', canvas.getGrid()[i]);
   }
 }
 
 void test_new_game_renders_empty_canvas(void) {
-  Shape canvas;
-  Sequence sequence = Sequence(0);
-
-  makeCanvas(canvas);
+  Shape canvas = Shape(20, 10, board_empty_grid);
   // Dirty the canvas with some pixels. The game will clear these.
   canvas.fillWith('x');
 
-  // Confirm that did what we think it did.
-  TEST_ASSERT_EQUAL(20, canvas.getRows());
-  TEST_ASSERT_EQUAL(10, canvas.getCols());
+  Sequence sequence = Sequence(0);
+  Game game = Game(canvas, sequence);
 
-  Game game = Game(canvas, sequence, emptyCallback);
   // First and last squares are blank.
   TEST_ASSERT_EQUAL(' ', canvas.getGrid()[0]);
   TEST_ASSERT_EQUAL(' ', canvas.getGrid()[199]);
   TEST_ASSERT_EQUAL(20, canvas.getRows());
   TEST_ASSERT_EQUAL(10, canvas.getCols());
+
 }
 
 void test_new_game_renders_first_piece(void) {
-  Shape canvas;
-  Sequence sequence = Sequence(0);
-  makeCanvas(canvas);
+  Shape canvas = Shape(20, 10, board_empty_grid);
 
-  Game game = Game(canvas, sequence, emptyCallback);
+  Game game = Game(canvas, Sequence(0));
 
   // First piece has been dropped.
-  Shape expected;
-  expected.setFromChars(board_with_first_piece, 20, 10);
+  Shape expected = Shape(20, 10, board_with_first_piece);
+
+  TEST_ASSERT_TRUE(canvas == expected);
+}
+
+void test_move_left(void) {
+  Shape canvas = Shape(20, 10, board_empty_grid);
+  Sequence sequence = Sequence(0);
+  Game game = Game(canvas, sequence);
+
+  // Move all the way to the edge of the board and stop when you run into it.
+  TEST_ASSERT_TRUE(game.moveLeft());
+  TEST_ASSERT_TRUE(game.moveLeft());
+  TEST_ASSERT_TRUE(game.moveLeft());
+  TEST_ASSERT_FALSE(game.moveLeft());
+
+  // First piece is all the way to the left.
+  Shape expected = Shape(20, 10, board_with_first_piece_far_left);
+  TEST_ASSERT_TRUE(canvas == expected);
+}
+
+void test_move_right(void) {
+  Shape canvas = Shape(20, 10, board_empty_grid);
+  Sequence sequence = Sequence(0);
+  Game game = Game(canvas, sequence);
+
+  // Move all the way to the edge of the board and stop when you run into it.
+  TEST_ASSERT_TRUE(game.moveRight());
+  TEST_ASSERT_TRUE(game.moveRight());
+  TEST_ASSERT_TRUE(game.moveRight());
+  TEST_ASSERT_FALSE(game.moveRight());
+
+  // First piece is all the way to the left.
+  Shape expected = Shape(20, 10, board_with_first_piece_far_right);
   TEST_ASSERT_TRUE(canvas == expected);
 }
 
@@ -471,7 +406,7 @@ int main(int argc, char** argv) {
   RUN_TEST(test_rotate_clockwise);
   RUN_TEST(test_rotate_anticlockwise);
 
-  // geom.h
+  // shape.h
   RUN_TEST(test_row_empty);
   RUN_TEST(test_col_empty);
   RUN_TEST(test_bounding_box_empty_grid);
@@ -483,7 +418,8 @@ int main(int argc, char** argv) {
   RUN_TEST(test_generate_shapes);
   RUN_TEST(test_in_bounds);
   RUN_TEST(test_collide);
-  RUN_TEST(test_stick);
+  RUN_TEST(test_drop);
+  RUN_TEST(test_drop_at_edge);
 
   // sequence.h
   RUN_TEST(test_sequence);
@@ -492,6 +428,8 @@ int main(int argc, char** argv) {
   RUN_TEST(test_make_canvas);
   RUN_TEST(test_new_game_renders_empty_canvas);
   RUN_TEST(test_new_game_renders_first_piece);
+  RUN_TEST(test_move_left);
+  RUN_TEST(test_move_right);
 
   UNITY_END();
 }

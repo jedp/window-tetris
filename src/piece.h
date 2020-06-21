@@ -1,13 +1,14 @@
 #pragma once
 
 #include <stdint.h>
-#include <geom.h>
+#include <shape.h>
 
 typedef enum {
   UP,
   RIGHT,
   DOWN,
   LEFT,
+  NUM_ORIENTATIONS,
 } orientation_t;
 
 /**
@@ -26,8 +27,11 @@ typedef enum PieceName {
 
 class Piece {
   public:
-    Piece();
-    void generateFromShapes(const char **shapes, int rows, int cols);
+    Piece(int rows, int cols,
+        Shape up,
+        Shape right,
+        Shape down,
+        Shape left);
     Shape getCurrentShape();
     void setCoordinates(point_t coordinates);
     point_t getCoordinates();
@@ -36,12 +40,15 @@ class Piece {
     Shape shapeForAntiClockwiseRotation();
     void rotateClockwise();
     void rotateAntiClockwise();
+    Shape shapes[4];
 
   private:
+    int rows;
+    int cols;
     point_t coordinates;
     orientation_t orientation;
-    Shape shapes[4];
 };
+
 
 orientation_t nextClockwiseOrientation(orientation_t from);
 

@@ -1,25 +1,24 @@
-#include <stdint.h>
-#include "geom.h"
-#include "board.h"
 
-void Shape::setWithChar(char c, int rows, int cols) {
-  this->rows = rows;
-  this->cols = cols;
-  this->grid = new char[rows * cols]();
+#include <shape.h>
+#include <board.h>
+#include <iostream>
 
-  for (uint8_t i = 0; i < rows * cols; ++i) {
-    this->grid[i] = c;
+Shape::Shape(int rows, int cols, const char *chars)
+ : rows(rows),
+   cols(cols),
+   grid(new char[rows * cols + 1]())
+{
+  for (int i = 0; i < rows * cols; ++i) {
+    this->grid[i] = chars[i];
   }
+  // In case we ever want to print this, make it a nice string.
+  this -> grid[rows * cols] = '\0';
 
   updateBoundingBox();
 }
 
-void Shape::setFromChars(const char *chars, int rows, int cols) {
-  this->rows = rows;
-  this->cols = cols;
-  this->grid = new char[rows * cols]();
-
-  for (uint8_t i = 0; i < rows * cols; ++i) {
+void Shape::fillWithChars(const char *chars) {
+  for (int i = 0; i < rows * cols; ++i) {
     this->grid[i] = chars[i];
   }
 
@@ -33,11 +32,19 @@ void Shape::setCharAt(char c, point_t coordinates) {
 }
 
 void Shape::fillWith(char fillChar) {
-  for (uint8_t i = 0; i < rows * cols; ++i) {
+  for (int i = 0; i < rows * cols; ++i) {
     grid[i] = fillChar;
   }
 
   updateBoundingBox();
+}
+
+bool Shape::within(bbox_t other, point_t dst) {
+  if (bbox.uLeft.row + dst.row < other.uLeft.row) return false;
+  if (bbox.uLeft.col + dst.col < other.uLeft.col) return false;
+  if (bbox.lRight.col + dst.col > other.lRight.col) return false;
+  if (bbox.lRight.row + dst.row > other.lRight.row) return false;
+  return true;
 }
 
 /**
@@ -74,10 +81,10 @@ bool Shape::collides(const Shape &other, point_t dst) {
  * The destination point is in board space.
  */
 void Shape::drop(const Shape &other, point_t dst) {
-  for (uint8_t i = dst.row; i < (int)rows && i < (int)other.getRows() + dst.row; ++i) {
+  for (int i = dst.row; i < (int)rows && i < (int)other.getRows() + dst.row; ++i) {
     if (i < 0) continue;
 
-    for (uint8_t j = dst.col; j < (int)cols && j < (int)other.getCols() + dst.col; ++j) {
+    for (int j = dst.col; j < (int)cols && j < (int)other.getCols() + dst.col; ++j) {
       if (j < 0) continue;
 
       char cell = other.getGrid()[(i - dst.row) * other.getCols() + (j - dst.col)];
@@ -94,7 +101,7 @@ bool Shape::operator==(const Shape &other) {
   if (rows != other.rows) return false;
   if (cols != other.cols) return false;
 
-  for (uint8_t i = 0; i < rows * cols; ++i) {
+  for (int i = 0; i < rows * cols; ++i) {
     if (grid[i] != other.grid[i]) {
       return false;
     }
@@ -107,7 +114,7 @@ void Shape::updateBoundingBox() {
 }
 
 bool rowEmpty(const char *grid, int rows, int cols, int row) {
-  for (uint8_t col = 0; col < cols; ++col) {
+  for (int col = 0; col < cols; ++col) {
     if (grid[row * cols + col] != ' ') {
       return false;
     }
@@ -116,7 +123,7 @@ bool rowEmpty(const char *grid, int rows, int cols, int row) {
 }
 
 bool colEmpty(const char *grid, int rows, int cols, int col) {
-  for (uint8_t row = 0; row < rows; ++row) {
+  for (int row = 0; row < rows; ++row) {
     if (grid[row * cols + col] != ' ') {
       return false;
     }
