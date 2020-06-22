@@ -486,6 +486,29 @@ void test_drop(void) {
   TEST_ASSERT_TRUE(canvas == expected2);
 }
 
+void test_game_over(void) {
+  Shape canvas = Shape(20, 10, board_empty_grid);
+  Sequence sequence = Sequence(0);
+
+  static bool gameOver = false;
+  auto callback = []() { gameOver = true; };
+  Game game = Game(canvas, sequence, callback);
+
+  // Drop pieces until the game ends.
+  game.drop();
+  game.drop();
+  game.drop();
+  game.drop();
+  game.drop();
+  game.drop();
+  game.drop();
+  game.drop();
+  game.drop();
+  TEST_ASSERT_FALSE(gameOver);
+  game.drop();
+  TEST_ASSERT_TRUE(gameOver);
+}
+
 int main(int argc, char** argv) {
   UNITY_BEGIN();
 
@@ -525,6 +548,7 @@ int main(int argc, char** argv) {
   RUN_TEST(test_move_left_then_tick_down_see_new_piece);
   RUN_TEST(test_game_rotate_clockwise);
   RUN_TEST(test_drop);
+  RUN_TEST(test_game_over);
 
   UNITY_END();
 }

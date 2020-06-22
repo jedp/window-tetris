@@ -29,7 +29,7 @@ class Game {
   public:
     Game(const Shape &canvas,
          const Sequence &sequence,
-         void gameOverCallback(void));
+         void (*gameOverCallback)(void));
     bool moveLeft();
     bool moveRight();
     bool rotateClockwise();
@@ -50,5 +50,6 @@ class Game {
     void render();
     void reset();
     void gameOver();
+    void (*gameOverCallback)(void);
 };
 
