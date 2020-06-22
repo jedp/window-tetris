@@ -2,7 +2,20 @@
 
 # Window Tetris
 
-Building a grid of 5050 RGB LEDs to mount in the window and play Tetris on.
+Arduino-based Tetris game to render using a large grid of 5050 RGB LEDs,
+controlled by means of a Covid-friendly foot controller.
+
+The goal is to mount the display outside, facing the street, so that passers-by
+can play using the foot controller on the sidewalk.
+
+## Current Status
+
+Done: game engine that plays and scores according to the classic rules.
+
+TBD:
+
+- Build and drive 5050 LED display (parts ordered)
+- Build and be driven by external foot controller (parts ordered)
 
 ## Unit Tests
 
