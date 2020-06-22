@@ -26,14 +26,16 @@ typedef enum state {
 } state_t;
 
 class Game {
-
-  public:
-    Game(const Shape &canvas,
-         const Sequence &sequence,
-         void (*gameOverCallback)(void));
+ public:
+    Game(const Shape &canvas_,
+         const Sequence &sequence_,
+         void (*gameOverCallback_)(void));
 
     /** Set the board to an arbitrary grid. */
     void setGrid(const char *grid);
+
+    /** Start the game. */
+    void play();
 
     /** Move the piece left, if unobstructed. */
     bool moveLeft();
@@ -68,9 +70,9 @@ class Game {
     /**
      * Get current stats.
      */
-    stats_t getStats() const { return stats; };
+    stats_t getStats() const { return stats; }
 
-  private:
+ private:
     /** The canvas used for rendering. Mutate this after each move or tick. */
     Shape canvas;
 

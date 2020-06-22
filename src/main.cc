@@ -2,7 +2,7 @@
 
 #include "Arduino.h"
 #include "Adafruit_NeoPixel.h"
-#include "game.h"
+#include "src/game.h"
 
 #define PIN        6
 #define NUMPIXELS 200

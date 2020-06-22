@@ -6,22 +6,20 @@
  * Interface for a random number generator used by Sequence.
  */
 class Random {
+ public:
+    explicit Random(uint32_t seed_);
+    uint32_t choice(uint32_t from, uint32_t to);
 
-  public:
-    Random(long seed);
-    long choice(long from, long to);
-
-  private:
-    long seed;
+ private:
+    uint32_t seed;
 };
 
 /**
  * Endlessly generates the next piece to play.
  */
 class Sequence {
-
-  public:
-    Sequence(long seed);
+ public:
+    explicit Sequence(uint32_t seed);
 
     /**
      * Return the next piece to display.
@@ -31,7 +29,7 @@ class Sequence {
      */
     piece_name_t next();
 
-  private:
+ private:
     Random random;
     piece_name_t seq[NUM_PIECES];
     int current_piece_index;
