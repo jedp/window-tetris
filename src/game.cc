@@ -7,9 +7,11 @@
 
 Game::Game(
     const Shape &canvas,
-    const Sequence &sequence)
+    const Sequence &sequence,
+    void (*gameOverCallback)(void))
  : canvas(canvas),
    sequence(sequence),
+   gameOverCallback(gameOverCallback),
    currentPieceName(I),
    currentOrientation(UP),
    board(Shape(20, 10, "                                                                                                                                                                                                        ")),
@@ -177,5 +179,6 @@ void Game::reset() {
 }
 
 void Game::gameOver() {
+  gameOverCallback();
 }
 
