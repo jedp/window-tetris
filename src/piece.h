@@ -30,7 +30,7 @@ typedef enum PieceName {
 
 class Piece {
   public:
-    Piece(int rows, int cols,
+    Piece(
         Shape up,
         Shape right,
         Shape down,
@@ -44,13 +44,11 @@ class Piece {
     Shape shapeForAntiClockwiseRotation();
     void rotateClockwise();
     void rotateAntiClockwise();
-    Shape shapes[4];
 
   private:
-    int rows;
-    int cols;
     point_t coordinates;
     orientation_t orientation;
+    Shape shapes[4];
 };
 
 

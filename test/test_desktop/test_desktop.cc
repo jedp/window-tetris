@@ -156,7 +156,7 @@ void test_generate_shapes(void) {
   Shape J_RIGHT = Shape(4, 4, " JJ  J   J      ");
   Shape J_DOWN =  Shape(4, 4, "    JJJ   J     ");
   Shape J_LEFT =  Shape(4, 4, " J   J  JJ      ");
-  Piece piece = Piece(4, 4, J_UP, J_RIGHT, J_DOWN, J_LEFT);
+  Piece piece = Piece(J_UP, J_RIGHT, J_DOWN, J_LEFT);
 
   TEST_ASSERT_EQUAL(4, piece.shapeFacing(UP).getRows());
   TEST_ASSERT_EQUAL(4, piece.shapeFacing(UP).getCols());
@@ -192,7 +192,7 @@ void test_in_bounds(void) {
   Shape J_RIGHT = Shape(4, 4, " JJ  J   J      ");
   Shape J_DOWN =  Shape(4, 4, "    JJJ   J     ");
   Shape J_LEFT =  Shape(4, 4, " J   J  JJ      ");
-  Piece piece = Piece(4, 4, J_UP, J_RIGHT, J_DOWN, J_LEFT);
+  Piece piece = Piece(J_UP, J_RIGHT, J_DOWN, J_LEFT);
 
   Shape grid = Shape(20, 10, board_empty_grid);
 
@@ -507,6 +507,16 @@ void test_game_over(void) {
   TEST_ASSERT_FALSE(gameOver);
   game.drop();
   TEST_ASSERT_TRUE(gameOver);
+  const char *gridAtGameOver = canvas.getGrid();
+
+  // Moving and ticking do nothing.
+  game.moveLeft();
+  game.moveRight();
+  game.rotateClockwise();
+  game.tick();
+  game.tick();
+  game.tick();
+  TEST_ASSERT_EQUAL(canvas.getGrid(), gridAtGameOver);
 }
 
 void test_drop_points(void) {

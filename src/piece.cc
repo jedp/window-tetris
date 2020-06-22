@@ -12,17 +12,13 @@ orientation_t nextAntiClockwiseOrientation(orientation_t from) {
 }
 
 Piece::Piece(
-    int rows,
-    int cols,
     Shape up,
     Shape right,
     Shape down,
     Shape left)
-  : rows(rows),
-    cols(cols),
-    shapes { up, right, down, left },
+  : coordinates((struct point) { 0, 0 }),
     orientation(UP),
-    coordinates((struct point) { 0, 0 })
+    shapes { up, right, down, left }
 {
 }
 

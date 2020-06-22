@@ -10,3 +10,6 @@ On native: `pio test -e native`
 
 On attached Arduino device: `pio test -e uno`
 
+The native tests are run automatically by travis. But please be sure to test
+on a device before submitting changes.
+
