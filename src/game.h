@@ -36,7 +36,7 @@ class Game {
     Game(const Shape &canvas,
          const Sequence &sequence,
          void (*gameOverCallback)(void));
-    bool setGrid(const char *grid);
+    void setGrid(const char *grid);
     bool moveLeft();
     bool moveRight();
     bool rotateClockwise();
@@ -46,14 +46,15 @@ class Game {
     stats_t getStats() const { return stats; };
 
   private:
-    piece_name_t currentPieceName;
-    orientation_t currentOrientation;
-    Sequence sequence;
     Shape canvas;
-    Shape board;
-    Piece pieces[NUM_PIECES];
+    Sequence sequence;
+    void (*gameOverCallback)(void);
     stats_t stats;
     state_t state;
+    piece_name_t currentPieceName;
+    orientation_t currentOrientation;
+    Shape board;
+    Piece pieces[NUM_PIECES];
     bool move(orientation_t dir);
     void stickCurrentPiece();
     void hideCurrentPiece();
@@ -62,6 +63,5 @@ class Game {
     void scoreDroppedRows(int rows);
     void render();
     void gameOver();
-    void (*gameOverCallback)(void);
 };
 
