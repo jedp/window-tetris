@@ -12,6 +12,7 @@ Game::Game(
  : canvas(canvas),
    sequence(sequence),
    gameOverCallback(gameOverCallback),
+   stats((struct stats) { 0 }),
    currentPieceName(I),
    currentOrientation(UP),
    board(Shape(20, 10, "                                                                                                                                                                                                        ")),
@@ -136,7 +137,9 @@ bool Game::rotateClockwise() {
 }
 
 void Game::drop() {
+  int startRow = pieces[currentPieceName].getCoordinates().row;
   while(move(DOWN)) ;
+  score(pieces[currentPieceName].getCoordinates().row - startRow);
 
   board.stick(pieces[currentPieceName].getCurrentShape(),
              pieces[currentPieceName].getCoordinates());
@@ -154,6 +157,8 @@ void Game::tick() {
 void Game::produceNextPiece() {
   currentPieceName = sequence.next();
 
+  pieces[currentPieceName].setOrientation(UP);
+
   if (board.collides(pieces[currentPieceName].getCurrentShape(),
                      START_COORDINATES)) {
     gameOver();
@@ -164,6 +169,10 @@ void Game::produceNextPiece() {
   render();
 }
 
+void Game::score(int points) {
+  stats.score += points;
+}
+
 void Game::render() {
   canvas.fillWith(EMPTY_SPACE);
   canvas.stick(board, (struct point) { 0, 0});
@@ -172,7 +181,7 @@ void Game::render() {
 }
 
 void Game::reset() {
-  score = 0;
+  stats = (struct stats) { 0 };
 
   board.fillWith(EMPTY_SPACE);
   canvas.fillWith(EMPTY_SPACE);
