@@ -6,15 +6,14 @@
 
 void swap(piece_name_t *seq, int i, int j);
 
-Random::Random(long seed) {
-  this->seed = seed;
-
+Random::Random(uint32_t seed_)
+: seed(seed_) {
 #ifdef ARDUINO
   randomSeed(seed);
 #endif
 }
 
-long Random::choice(long from, long to) {
+uint32_t Random::choice(uint32_t from, uint32_t to) {
 #ifdef ARDUINO
   return random(from, to);
 #else
@@ -22,7 +21,7 @@ long Random::choice(long from, long to) {
 #endif
 }
 
-Sequence::Sequence(long seed) : random(seed) {
+Sequence::Sequence(uint32_t seed) : random(seed) {
   reshuffle();
 }
 

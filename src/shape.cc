@@ -1,11 +1,10 @@
 #include <shape.h>
-#include <board.h>
+#include <piece.h>
 
 Shape::Shape(int rows, int cols, const char *chars)
- : rows(rows),
-   cols(cols),
-   grid(new char[rows * cols + 1]())
-{
+: rows(rows),
+  cols(cols),
+  grid(new char[rows * cols + 1]()) {
   for (int i = 0; i < rows * cols; ++i) {
     this->grid[i] = chars[i];
   }
@@ -101,16 +100,17 @@ bool Shape::collides(const Shape &other, point_t dst) {
   // If it's above the our bounding box, don't do any hard work.
   if (dst.row + other.getRows() < bbox.uLeft.row) return false;
 
-  for (int i = dst.row; i < (int)rows && i < (int)other.getRows() + dst.row; ++i) {
+  for (int i = dst.row; i < rows && i < other.getRows() + dst.row; ++i) {
     if (i < 0) continue;
 
-    for (int j = dst.col; j < (int)cols && j < (int)other.getCols() + dst.col; ++j) {
+    for (int j = dst.col; j < cols && j < other.getCols() + dst.col; ++j) {
       if (j < 0) continue;
 
       // i and j are in our coordinate space.
       // Offset to get the local coordinate in the shape.
-      if (other.getGrid()[(i - dst.row) * other.getCols() + (j - dst.col)] != ' '
-          && grid[i * cols + j] != ' ') {
+      if (other.getGrid()[(i - dst.row) * other.getCols() + (j - dst.col)]
+          != EMPTY_SPACE
+          && grid[i * cols + j] != EMPTY_SPACE) {
         return true;
       }
     }
@@ -124,14 +124,15 @@ bool Shape::collides(const Shape &other, point_t dst) {
  * The destination point is in board space.
  */
 void Shape::stick(const Shape &other, point_t dst) {
-  for (int i = dst.row; i < (int)rows && i < (int)other.getRows() + dst.row; ++i) {
+  for (int i = dst.row; i < rows && i < other.getRows() + dst.row; ++i) {
     if (i < 0) continue;
 
-    for (int j = dst.col; j < (int)cols && j < (int)other.getCols() + dst.col; ++j) {
+    for (int j = dst.col; j < cols && j < other.getCols() + dst.col; ++j) {
       if (j < 0) continue;
 
-      char cell = other.getGrid()[(i - dst.row) * other.getCols() + (j - dst.col)];
-      if (cell != ' ') {
+      char cell = other
+        .getGrid()[(i - dst.row) * other.getCols() + (j - dst.col)];
+      if (cell != EMPTY_SPACE) {
         grid[i * cols + j] = cell;
       }
     }
@@ -153,28 +154,6 @@ bool Shape::operator==(const Shape &other) {
 }
 
 void Shape::updateBoundingBox() {
-  boundingBox(grid, rows, cols, bbox);
-}
-
-bool rowEmpty(const char *grid, int rows, int cols, int row) {
-  for (int col = 0; col < cols; ++col) {
-    if (grid[row * cols + col] != ' ') {
-      return false;
-    }
-  }
-  return true;
-}
-
-bool colEmpty(const char *grid, int rows, int cols, int col) {
-  for (int row = 0; row < rows; ++row) {
-    if (grid[row * cols + col] != ' ') {
-      return false;
-    }
-  }
-  return true;
-}
-
-void boundingBox(const char *grid, int rows, int cols, bbox_t &bbox) {
   uint8_t _top = 0;
   uint8_t _left = 0;
   uint8_t _bottom = 0;
@@ -212,5 +191,23 @@ void boundingBox(const char *grid, int rows, int cols, bbox_t &bbox) {
   bbox.uLeft.col = _left;
   bbox.lRight.row = _bottom;
   bbox.lRight.col = _right;
+}
+
+bool rowEmpty(const char *grid, int rows, int cols, int row) {
+  for (int col = 0; col < cols; ++col) {
+    if (grid[row * cols + col] != ' ') {
+      return false;
+    }
+  }
+  return true;
+}
+
+bool colEmpty(const char *grid, int rows, int cols, int col) {
+  for (int row = 0; row < rows; ++row) {
+    if (grid[row * cols + col] != ' ') {
+      return false;
+    }
+  }
+  return true;
 }
 

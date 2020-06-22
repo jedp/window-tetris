@@ -1,4 +1,3 @@
-#include <assert.h>
 #include <game.h>
 #include <shape.h>
 #include <assert.h>
@@ -42,32 +41,35 @@ const Shape Z_DOWN  = Shape(4, 4, "    ZZ   ZZ     ");
 const Shape Z_LEFT  = Shape(4, 4, " Z  ZZ  Z       ");
 
 Game::Game(
-    const Shape &canvas,
-    const Sequence &sequence,
-    void (*gameOverCallback)(void))
- : canvas(canvas),
-   sequence(sequence),
-   gameOverCallback(gameOverCallback),
-   stats((struct stats) { 0 }),
-   state(PLAYING),
-   currentPieceName(I),
-   board(Shape(20, 10, initialBoardGrid)),
-   pieces{
-     [I] = Piece(I_UP, I_RIGHT, I_DOWN, I_LEFT),
-     [J] = Piece(J_UP, J_RIGHT, J_DOWN, J_LEFT),
-     [L] = Piece(L_UP, L_RIGHT, L_DOWN, L_LEFT),
-     [O] = Piece(O_UP, O_RIGHT, O_DOWN, O_LEFT),
-     [S] = Piece(S_UP, S_RIGHT, S_DOWN, S_LEFT),
-     [T] = Piece(T_UP, T_RIGHT, T_DOWN, T_LEFT),
-     [Z] = Piece(Z_UP, Z_RIGHT, Z_DOWN, Z_LEFT),
-   }
+    const Shape &canvas_,
+    const Sequence &sequence_,
+    void (*gameOverCallback_)(void))
+: canvas(canvas_),
+  sequence(sequence_),
+  gameOverCallback(gameOverCallback_),
+  stats((struct stats) { 0 }),
+  state(PLAYING),
+  currentPieceName(I),
+  board(Shape(20, 10, initialBoardGrid)),
+  pieces{
+    [I] = Piece(I_UP, I_RIGHT, I_DOWN, I_LEFT),
+    [J] = Piece(J_UP, J_RIGHT, J_DOWN, J_LEFT),
+    [L] = Piece(L_UP, L_RIGHT, L_DOWN, L_LEFT),
+    [O] = Piece(O_UP, O_RIGHT, O_DOWN, O_LEFT),
+    [S] = Piece(S_UP, S_RIGHT, S_DOWN, S_LEFT),
+    [T] = Piece(T_UP, T_RIGHT, T_DOWN, T_LEFT),
+    [Z] = Piece(Z_UP, Z_RIGHT, Z_DOWN, Z_LEFT),
+  }
 {
-  reset();
-  produceNextPiece();
 }
 
 void Game::setGrid(const char *grid) {
   board.fillWithChars(grid);
+}
+
+void Game::play() {
+  reset();
+  produceNextPiece();
 }
 
 bool Game::moveLeft() {
@@ -140,15 +142,16 @@ void Game::drop() {
   if (state != PLAYING) return;
 
   int startRow = pieces[currentPieceName].getCoordinates().row;
-  while(move(DOWN)) ;
+
+  while (move(DOWN)) {}
+
   scoreDroppedRows(pieces[currentPieceName].getCoordinates().row - startRow);
 
   stickCurrentPiece();
 }
 
 void Game::tick() {
-  switch(state) {
-
+  switch (state) {
     case GAME_OVER:
       return;
 

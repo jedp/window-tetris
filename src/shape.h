@@ -22,8 +22,7 @@ typedef struct bbox {
  * Data class for a shape.
  */
 class Shape {
-
-  public:
+ public:
     Shape(int rows, int cols, const char *chars);
 
     /** The number of rows in the shape. */
@@ -102,13 +101,20 @@ class Shape {
      */
     void stick(const Shape &other, point_t dst);
 
-    /** Recompute the bounding box. */
+    /**
+     * Re-compute the bounding box.
+     *
+     * The coordinates are inclusive, so a full 4x4 shape will have bounds of
+     * (0, 0) to (3, 3).
+     *
+     * A shape with all empty spaces will have a bounding box of 0 - 0.
+     */
     void updateBoundingBox();
 
     /** Return true if both shapes contain the same grid pixels. */
     bool operator==(const Shape &other);
 
-  private:
+ private:
     int rows;
     int cols;
     char *grid;
@@ -124,15 +130,4 @@ bool rowEmpty(const char *grid, int rows, int cols, int row);
  * Return whether the designated col in the grid is empty.
  */
 bool colEmpty(const char *grid, int rows, int cols, int col);
-
-/**
- * Set value of coordinates according to the bounding box of the grid
- * with given number of rows and cols.
- *
- * The coordinates are inclusive, so a full 4x4 shape will have bounds of
- * (0, 0) to (3, 3).
- *
- * A shape with no non-empty spaces will have a bounding box of 0 - 0.
- */
-void boundingBox(const char *grid, int rows, int cols, bbox_t &bbox);
 

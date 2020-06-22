@@ -1,10 +1,11 @@
-#include <board.h>
-#include <piece.h>
-#include <shape.h>
-#include <game.h>
-#include <sequence.h>
-#include <unity.h>
 #include "test_desktop_data.h"
+
+#include <unity.h>
+
+#include <game.h>
+#include <piece.h>
+#include <sequence.h>
+#include <shape.h>
 
 void noOpCallback() {
 }
@@ -69,33 +70,26 @@ void test_rotate_anticlockwise(void) {
 }
 
 void test_bounding_box_empty_grid(void) {
-  bbox_t bbox;
-  int rows = 3;
-  int cols = 4;
-  const char *grid = "    "
-                     "    "
-                     "    ";
-  boundingBox(grid, rows, cols, bbox);
+  Shape shape = Shape(3, 4, "    "
+                            "    "
+                            "    ");
   // An empty thing has a zero-size bounding box.
-  TEST_ASSERT_EQUAL(0, bbox.uLeft.row);
-  TEST_ASSERT_EQUAL(0, bbox.uLeft.col);
-  TEST_ASSERT_EQUAL(0, bbox.lRight.row);
-  TEST_ASSERT_EQUAL(0, bbox.lRight.col);
+  TEST_ASSERT_EQUAL(0, shape.getBBox().uLeft.row);
+  TEST_ASSERT_EQUAL(0, shape.getBBox().uLeft.col);
+  TEST_ASSERT_EQUAL(0, shape.getBBox().lRight.row);
+  TEST_ASSERT_EQUAL(0, shape.getBBox().lRight.col);
 }
 
 void test_bounding_box(void) {
-  bbox_t bbox;
-  int rows = 4;
-  int cols = 5;
-  const char *grid = "     "
-                     " xxx "
-                     "  xxx"
-                     "     ";
-  boundingBox(grid, rows, cols, bbox);
-  TEST_ASSERT_EQUAL(1, bbox.uLeft.row);
-  TEST_ASSERT_EQUAL(1, bbox.uLeft.col);
-  TEST_ASSERT_EQUAL(2, bbox.lRight.row);
-  TEST_ASSERT_EQUAL(4, bbox.lRight.col);
+  Shape shape = Shape(4, 5, "     "
+                            " xxx "
+                            "  xxx"
+                            "     ");
+  // An actual shape has a non-zero bounding box.
+  TEST_ASSERT_EQUAL(1, shape.getBBox().uLeft.row);
+  TEST_ASSERT_EQUAL(1, shape.getBBox().uLeft.col);
+  TEST_ASSERT_EQUAL(2, shape.getBBox().lRight.row);
+  TEST_ASSERT_EQUAL(4, shape.getBBox().lRight.col);
 }
 
 void test_update_bounding_box(void) {
@@ -185,26 +179,6 @@ void test_generate_shapes(void) {
   TEST_ASSERT_EQUAL(1, piece.shapeFacing(LEFT).getBBox().lRight.col);
   TEST_ASSERT_EQUAL(2, piece.shapeFacing(LEFT).getBBox().lRight.row);
   TEST_ASSERT_EQUAL(0, piece.shapeFacing(LEFT).getBBox().uLeft.col);
-}
-
-void test_in_bounds(void) {
-  Shape J_UP =    Shape(4, 4, "J   JJJ         ");
-  Shape J_RIGHT = Shape(4, 4, " JJ  J   J      ");
-  Shape J_DOWN =  Shape(4, 4, "    JJJ   J     ");
-  Shape J_LEFT =  Shape(4, 4, " J   J  JJ      ");
-  Piece piece = Piece(J_UP, J_RIGHT, J_DOWN, J_LEFT);
-
-  Shape grid = Shape(20, 10, board_empty_grid);
-
-  TEST_ASSERT_TRUE(inBounds(grid, piece.shapeFacing(UP), (struct point) { 0, 0 }));
-  TEST_ASSERT_TRUE(inBounds(grid, piece.shapeFacing(UP), (struct point) { 0, 8 }));
-  TEST_ASSERT_TRUE(inBounds(grid, piece.shapeFacing(UP), (struct point) { 19, 0 }));
-  TEST_ASSERT_TRUE(inBounds(grid, piece.shapeFacing(UP), (struct point) { 19, 8 }));
-
-  TEST_ASSERT_FALSE(inBounds(grid, piece.shapeFacing(UP), (struct point) { -1, 0 }));
-  TEST_ASSERT_FALSE(inBounds(grid, piece.shapeFacing(UP), (struct point) { 0, 9 }));
-  TEST_ASSERT_FALSE(inBounds(grid, piece.shapeFacing(UP), (struct point) { 20, 0 }));
-  TEST_ASSERT_FALSE(inBounds(grid, piece.shapeFacing(UP), (struct point) { 18, 9 }));
 }
 
 void test_collide(void) {
@@ -328,20 +302,19 @@ void test_new_game_renders_empty_canvas(void) {
   canvas.fillWith('x');
 
   Sequence sequence = Sequence(0);
-  Game(canvas, sequence, noOpCallback);
+  Game(canvas, sequence, noOpCallback).play();
 
   // First and last squares are blank.
   TEST_ASSERT_EQUAL(' ', canvas.getGrid()[0]);
   TEST_ASSERT_EQUAL(' ', canvas.getGrid()[199]);
   TEST_ASSERT_EQUAL(20, canvas.getRows());
   TEST_ASSERT_EQUAL(10, canvas.getCols());
-
 }
 
 void test_new_game_renders_first_piece(void) {
   Shape canvas = Shape(20, 10, board_empty_grid);
 
-  Game(canvas, Sequence(0), noOpCallback);
+  Game(canvas, Sequence(0), noOpCallback).play();
 
   // First piece has been dropped.
   Shape expected = Shape(20, 10, board_with_first_piece);
@@ -353,6 +326,7 @@ void test_move_left(void) {
   Shape canvas = Shape(20, 10, board_empty_grid);
   Sequence sequence = Sequence(0);
   Game game = Game(canvas, sequence, noOpCallback);
+  game.play();
 
   // Move all the way to the edge of the board and stop when you run into it.
   TEST_ASSERT_TRUE(game.moveLeft());
@@ -369,6 +343,7 @@ void test_move_right(void) {
   Shape canvas = Shape(20, 10, board_empty_grid);
   Sequence sequence = Sequence(0);
   Game game = Game(canvas, sequence, noOpCallback);
+  game.play();
 
   // Move all the way to the edge of the board and stop when you run into it.
   TEST_ASSERT_TRUE(game.moveRight());
@@ -385,6 +360,7 @@ void test_move_left_then_tick(void) {
   Shape canvas = Shape(20, 10, board_empty_grid);
   Sequence sequence = Sequence(0);
   Game game = Game(canvas, sequence, noOpCallback);
+  game.play();
 
   // Move all the way to the edge of the board and stop when you run into it.
   TEST_ASSERT_TRUE(game.moveLeft());
@@ -401,6 +377,7 @@ void test_move_left_then_tick_down_see_new_piece() {
   Shape canvas = Shape(20, 10, board_empty_grid);
   Sequence sequence = Sequence(0);
   Game game = Game(canvas, sequence, noOpCallback);
+  game.play();
 
   // Move all the way to the edge of the board and stop when you run into it.
   TEST_ASSERT_TRUE(game.moveLeft());
@@ -426,12 +403,14 @@ void test_move_left_then_tick_down_see_new_piece() {
   game.tick();
   game.tick();
   game.tick();
-  Shape expected = Shape(20, 10, board_with_first_piece_far_left_dropped_entirely);
+  Shape expected = Shape(20, 10,
+      board_with_first_piece_far_left_dropped_entirely);
   TEST_ASSERT_TRUE(canvas == expected);
 
   // The piece is stuck now. New piece emerges.
   game.tick();
-  Shape expected2 = Shape(20, 10, board_with_first_piece_far_left_dropped_new_piece_showing);
+  Shape expected2 = Shape(20, 10,
+      board_with_first_piece_far_left_dropped_new_piece_showing);
   TEST_ASSERT_TRUE(canvas == expected2);
 }
 
@@ -439,6 +418,7 @@ void test_game_rotate_clockwise(void) {
   Shape canvas = Shape(20, 10, board_empty_grid);
   Sequence sequence = Sequence(0);
   Game game = Game(canvas, sequence, noOpCallback);
+  game.play();
 
   TEST_ASSERT_TRUE(canvas == Shape(20, 10, board_with_first_piece));
   TEST_ASSERT_TRUE(game.rotateClockwise());
@@ -455,22 +435,25 @@ void test_game_rotate_clockwise_orientation_resets(void) {
   Shape canvas = Shape(20, 10, board_empty_grid);
   Sequence sequence = Sequence(0);
   Game game = Game(canvas, sequence, noOpCallback);
+  game.play();
   game.rotateClockwise();
-  game.drop(); // Drop I; J appears
-  game.drop(); // Drop J; L appears
-  game.drop(); // Drop L; O appears
-  game.drop(); // Drop O; S appears
-  game.drop(); // Drop S; T appears
-  game.drop(); // Drop T; Z appears
-  game.drop(); // Drop Z; I appears again
+  game.drop();  // Drop I; J appears
+  game.drop();  // Drop J; L appears
+  game.drop();  // Drop L; O appears
+  game.drop();  // Drop O; S appears
+  game.drop();  // Drop S; T appears
+  game.drop();  // Drop T; Z appears
+  game.drop();  // Drop Z; I appears again
   // Rotation on I has been reset and it is now facing UP again.
-  TEST_ASSERT_TRUE(canvas == Shape(20, 10, board_with_first_piece_r1_drop_and_drop_six_more));
+  TEST_ASSERT_TRUE(canvas == Shape(20, 10,
+        board_with_first_piece_r1_drop_and_drop_six_more));
 }
 
 void test_drop(void) {
   Shape canvas = Shape(20, 10, board_empty_grid);
   Sequence sequence = Sequence(0);
   Game game = Game(canvas, sequence, noOpCallback);
+  game.play();
 
   TEST_ASSERT_TRUE(canvas == Shape(20, 10, board_with_first_piece));
 
@@ -478,7 +461,8 @@ void test_drop(void) {
   game.moveLeft();
   game.moveLeft();
   game.drop();
-  Shape expected = Shape(20, 10, board_with_first_piece_far_left_dropped_new_piece_showing);
+  Shape expected = Shape(20, 10,
+      board_with_first_piece_far_left_dropped_new_piece_showing);
   TEST_ASSERT_TRUE(canvas == expected);
   game.drop();
 
@@ -493,6 +477,7 @@ void test_game_over(void) {
   static bool gameOver = false;
   auto callback = []() { gameOver = true; };
   Game game = Game(canvas, sequence, callback);
+  game.play();
 
   // Drop pieces until the game ends.
   game.drop();
@@ -523,6 +508,7 @@ void test_drop_points(void) {
   Shape canvas = Shape(20, 10, board_empty_grid);
   Sequence sequence = Sequence(0);
   Game game = Game(canvas, sequence, noOpCallback);
+  game.play();
 
   TEST_ASSERT_EQUAL(0, game.getStats().score);
   game.drop();
@@ -538,6 +524,7 @@ void test_reset(void) {
   Shape canvas = Shape(20, 10, board_empty_grid);
   Sequence sequence = Sequence(0);
   Game game = Game(canvas, sequence, noOpCallback);
+  game.play();
   // Mutate the canvas and the score.
   game.rotateClockwise();
   game.drop();
@@ -551,6 +538,7 @@ void test_clear_one_row_after_dropping(void) {
   Shape canvas = Shape(20, 10, board_empty_grid);
   Sequence sequence = Sequence(0);
   Game game = Game(canvas, sequence, noOpCallback);
+  game.play();
 
   // Drop the I in the middle.
   game.drop();
@@ -570,19 +558,22 @@ void test_clear_one_row_after_dropping(void) {
 
   // The bottom row is full and is marked for deletion.
   TEST_ASSERT_TRUE(canvas.noEmptySpacesInRow(19));
-  TEST_ASSERT_TRUE(canvas == Shape(20, 10, board_with_full_row_marked_for_deletion));
+  TEST_ASSERT_TRUE(canvas == Shape(20, 10,
+        board_with_full_row_marked_for_deletion));
 
   // Ticking forward in time removes the row.
   game.tick();
   // Another tick exposes the next piece.
   game.tick();
-  TEST_ASSERT_TRUE(canvas == Shape(20, 10, board_with_full_row_deleted_and_next_piece_showing));
+  TEST_ASSERT_TRUE(canvas == Shape(20, 10,
+        board_with_full_row_deleted_and_next_piece_showing));
 }
 
 void test_clear_one_row_after_ticking_down() {
   Shape canvas = Shape(20, 10, board_empty_grid);
   Sequence sequence = Sequence(0);
   Game game = Game(canvas, sequence, noOpCallback);
+  game.play();
 
   // Drop the I in the middle.
   game.drop();
@@ -620,19 +611,22 @@ void test_clear_one_row_after_ticking_down() {
 
   // The bottom row is full and is marked for deletion.
   TEST_ASSERT_TRUE(canvas.noEmptySpacesInRow(19));
-  TEST_ASSERT_TRUE(canvas == Shape(20, 10, board_with_full_row_marked_for_deletion));
+  TEST_ASSERT_TRUE(canvas == Shape(20, 10,
+        board_with_full_row_marked_for_deletion));
 
   // Ticking forward in time removes the row.
   game.tick();
   // Another tick exposes the next piece.
   game.tick();
-  TEST_ASSERT_TRUE(canvas == Shape(20, 10, board_with_full_row_deleted_and_next_piece_showing));
+  TEST_ASSERT_TRUE(canvas == Shape(20, 10,
+        board_with_full_row_deleted_and_next_piece_showing));
 }
 
 void test_scoring(void) {
   Shape canvas = Shape(20, 10, board_empty_grid);
   Sequence sequence = Sequence(0);
   Game game = Game(canvas, sequence, noOpCallback);
+  game.play();
 
   game.setGrid(board0_grid);
   game.rotateClockwise();
@@ -663,10 +657,7 @@ int main(int argc, char** argv) {
   RUN_TEST(test_bounding_box);
   RUN_TEST(test_update_bounding_box);
   RUN_TEST(test_fill);
-
-  // board.h
   RUN_TEST(test_generate_shapes);
-  RUN_TEST(test_in_bounds);
   RUN_TEST(test_collide);
   RUN_TEST(test_stick);
   RUN_TEST(test_stick_at_edge);
