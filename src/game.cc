@@ -51,7 +51,6 @@ Game::Game(
    stats((struct stats) { 0 }),
    state(PLAYING),
    currentPieceName(I),
-   currentOrientation(UP),
    board(Shape(20, 10, initialBoardGrid)),
    pieces{
      [I] = Piece(I_UP, I_RIGHT, I_DOWN, I_LEFT),
