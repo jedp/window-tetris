@@ -3,23 +3,6 @@
 #include "piece.h"
 
 /**
- * Return true if the range of characters from start to end (exclusive)
- * contains no empty spaces.
- */
-bool noEmptySpacesInRange(const char *board, int start, int end);
-
-/**
- * Set start and end to the beginning and end character positions in board
- * of the rows that have no empty spaces in them.
- *
- * If there are no non-empty rows, start and end are set to -1.
- *
- * This assumes that all non-empty rows are contiguous, which is guaranteed
- * with the normal set of seven Tetris pieces.
- */
-void getFullRowsRange(const char *board, int &start, int &end);
-
-/**
  * Returns true if the given piece can be placed on the board at the given
  * point.
  *
@@ -29,12 +12,4 @@ void getFullRowsRange(const char *board, int &start, int &end);
  * The destination point is in board space. It may have negative coordinates.
  */
 bool inBounds(Shape board, Shape shape, point_t dst);
-
-/**
- * Return true if any of the tiles in shape collide with tiles on the board
- * when shape is moved to the given point.
- *
- * The destination point is in board space.
- */
-bool collide(Shape board, Shape shape, point_t dst);
 

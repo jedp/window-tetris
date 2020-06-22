@@ -12,8 +12,9 @@ const int H_PIECE = 4;
 const int START_ROW = 2;
 const int START_COL = 4;
 
-const char EMPTY_SPACE = ' ';
 const point_t START_COORDINATES = (struct point) { 0, 3 };
+const point_t OFFSCREEN_COORDINATES = (struct point) { -4, 3 };
+
 const bbox_t BOARD_AREA = (struct bbox) {
   (struct point) { 0, 0 },
   (struct point) { H_BOARD - 1, W_BOARD - 1}
@@ -23,12 +24,19 @@ typedef struct stats {
   int score;
 } stats_t;
 
+typedef enum state {
+  PLAYING,
+  SHOWING_FULL_ROWS,
+  DELETING_FULL_ROWS,
+} state_t;
+
 class Game {
 
   public:
     Game(const Shape &canvas,
          const Sequence &sequence,
          void (*gameOverCallback)(void));
+    bool setGrid(const char *grid);
     bool moveLeft();
     bool moveRight();
     bool rotateClockwise();
@@ -45,9 +53,13 @@ class Game {
     Shape board;
     Piece pieces[NUM_PIECES];
     stats_t stats;
+    state_t state;
     bool move(orientation_t dir);
+    void stickCurrentPiece();
+    void hideCurrentPiece();
     void produceNextPiece();
-    void score(int);
+    void scoreRemovedRows(int rows);
+    void scoreDroppedRows(int rows);
     void render();
     void gameOver();
     void (*gameOverCallback)(void);

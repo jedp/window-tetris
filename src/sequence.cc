@@ -18,7 +18,7 @@ long Random::choice(long from, long to) {
 #ifdef ARDUINO
   return random(from, to);
 #else
-  return from;
+  return from + (seed % to);
 #endif
 }
 
@@ -39,7 +39,6 @@ piece_name_t Sequence::next() {
 void Sequence::reshuffle() {
   reset();
 
-  // No-op; Swaps them back to their original order.
   for (uint8_t i = 0; i < NUM_PIECES; ++i) {
     uint8_t k = random.choice(i, NUM_PIECES);
     swap(seq, k, NUM_PIECES - k);

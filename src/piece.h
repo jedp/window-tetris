@@ -3,6 +3,9 @@
 #include <stdint.h>
 #include <shape.h>
 
+const char EMPTY_SPACE = ' ';
+const char DEAD_CELL = 'X';
+
 typedef enum {
   UP,
   RIGHT,

@@ -285,6 +285,51 @@ const char *board_with_first_piece_far_right =
   "          "
   "          ";
 
+const char *board_with_full_row_marked_for_deletion =
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "J        L"
+  "XXXXXXXXXX";
+
+const char *board_with_full_row_deleted_and_next_piece_showing =
+  "          "
+  "    OO    "
+  "    OO    "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "J        L";
+
+
 const char *board0_grid =
   "          "
   "          "
