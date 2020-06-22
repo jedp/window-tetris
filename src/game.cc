@@ -75,7 +75,7 @@ Game::Game(
   produceNextPiece();
 }
 
-bool Game::setGrid(const char *grid) {
+void Game::setGrid(const char *grid) {
   board.fillWithChars(grid);
 }
 
