@@ -5,6 +5,7 @@
 #include <sequence.h>
 #include <unity.h>
 #include "test_desktop_data.h"
+#include <iostream>
 
 void noOpCallback() {
 }
@@ -467,6 +468,22 @@ void test_game_rotate_clockwise(void) {
   TEST_ASSERT_TRUE(canvas == Shape(20, 10, board_with_first_piece));
 }
 
+void test_game_rotate_clockwise_orientation_resets(void) {
+  Shape canvas = Shape(20, 10, board_empty_grid);
+  Sequence sequence = Sequence(0);
+  Game game = Game(canvas, sequence, noOpCallback);
+  game.rotateClockwise();
+  game.drop(); // Drop I; J appears
+  game.drop(); // Drop J; L appears
+  game.drop(); // Drop L; O appears
+  game.drop(); // Drop O; S appears
+  game.drop(); // Drop S; T appears
+  game.drop(); // Drop T; Z appears
+  game.drop(); // Drop Z; I appears again
+  // Rotation on I has been reset and it is now facing UP again.
+  TEST_ASSERT_TRUE(canvas == Shape(20, 10, board_with_first_piece_r1_drop_and_drop_six_more));
+}
+
 void test_drop(void) {
   Shape canvas = Shape(20, 10, board_empty_grid);
   Sequence sequence = Sequence(0);
@@ -509,6 +526,34 @@ void test_game_over(void) {
   TEST_ASSERT_TRUE(gameOver);
 }
 
+void test_drop_points(void) {
+  Shape canvas = Shape(20, 10, board_empty_grid);
+  Sequence sequence = Sequence(0);
+  Game game = Game(canvas, sequence, noOpCallback);
+
+  TEST_ASSERT_EQUAL(0, game.getStats().score);
+  game.drop();
+
+  // One point for each line dropped.
+  TEST_ASSERT_EQUAL(18, game.getStats().score);
+  game.drop();
+
+  TEST_ASSERT_EQUAL(35, game.getStats().score);
+}
+
+void test_reset(void) {
+  Shape canvas = Shape(20, 10, board_empty_grid);
+  Sequence sequence = Sequence(0);
+  Game game = Game(canvas, sequence, noOpCallback);
+  // Mutate the canvas and the score.
+  game.rotateClockwise();
+  game.drop();
+
+  game.reset();
+  TEST_ASSERT_TRUE(canvas == Shape(20, 10, board_empty_grid));
+  TEST_ASSERT_EQUAL(0, game.getStats().score);
+}
+
 int main(int argc, char** argv) {
   UNITY_BEGIN();
 
@@ -547,8 +592,10 @@ int main(int argc, char** argv) {
   RUN_TEST(test_move_left_then_tick);
   RUN_TEST(test_move_left_then_tick_down_see_new_piece);
   RUN_TEST(test_game_rotate_clockwise);
+  RUN_TEST(test_game_rotate_clockwise_orientation_resets);
   RUN_TEST(test_drop);
   RUN_TEST(test_game_over);
+  RUN_TEST(test_drop_points);
 
   UNITY_END();
 }

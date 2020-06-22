@@ -19,10 +19,9 @@ const bbox_t BOARD_AREA = (struct bbox) {
   (struct point) { H_BOARD - 1, W_BOARD - 1}
 };
 
-typedef enum {
-  STILL_ALIVE,
-  NOT_STILL_ALIVE,
-} move_result_t;
+typedef struct stats {
+  int score;
+} stats_t;
 
 class Game {
 
@@ -35,20 +34,21 @@ class Game {
     bool rotateClockwise();
     void drop();
     void tick();
+    void reset();
+    stats_t getStats() const { return stats; };
 
   private:
-    uint32_t getScore() const { return score; }
     piece_name_t currentPieceName;
     orientation_t currentOrientation;
     Sequence sequence;
     Shape canvas;
     Shape board;
     Piece pieces[NUM_PIECES];
-    uint32_t score;
+    stats_t stats;
     bool move(orientation_t dir);
     void produceNextPiece();
+    void score(int);
     void render();
-    void reset();
     void gameOver();
     void (*gameOverCallback)(void);
 };

@@ -43,6 +43,7 @@ const char *board_with_first_piece =
   "          "
   "          "
   "          ";
+
 const char *board_with_first_piece_r1 =
   "     I    "
   "     I    "
@@ -64,6 +65,29 @@ const char *board_with_first_piece_r1 =
   "          "
   "          "
   "          ";
+
+const char *board_with_first_piece_r1_drop_and_drop_six_more =
+  "          "
+  "   IIII   "
+  "          "
+  "          "
+  "   ZZ     "
+  "    ZZ    "
+  "    T     "
+  "   TTT    "
+  "    SS    "
+  "   SS     "
+  "    OO    "
+  "    OO    "
+  "     L    "
+  "   LLL    "
+  "   J      "
+  "   JJJ    "
+  "     I    "
+  "     I    "
+  "     I    "
+  "     I    ";
+
 const char *board_with_first_piece_r2 =
   "          "
   "          "
@@ -85,6 +109,7 @@ const char *board_with_first_piece_r2 =
   "          "
   "          "
   "          ";
+
 const char *board_with_first_piece_r3 =
   "    I     "
   "    I     "
