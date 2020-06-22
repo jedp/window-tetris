@@ -328,7 +328,7 @@ void test_new_game_renders_empty_canvas(void) {
   canvas.fillWith('x');
 
   Sequence sequence = Sequence(0);
-  Game game = Game(canvas, sequence, noOpCallback);
+  Game(canvas, sequence, noOpCallback);
 
   // First and last squares are blank.
   TEST_ASSERT_EQUAL(' ', canvas.getGrid()[0]);
@@ -341,7 +341,7 @@ void test_new_game_renders_empty_canvas(void) {
 void test_new_game_renders_first_piece(void) {
   Shape canvas = Shape(20, 10, board_empty_grid);
 
-  Game game = Game(canvas, Sequence(0), noOpCallback);
+  Game(canvas, Sequence(0), noOpCallback);
 
   // First piece has been dropped.
   Shape expected = Shape(20, 10, board_with_first_piece);

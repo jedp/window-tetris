@@ -36,10 +36,10 @@ class Piece {
         Shape down,
         Shape left);
     Shape getCurrentShape();
-    void setCoordinates(point_t coordinates);
+    void setCoordinates(point_t dst);
     void setOrientation(orientation_t o) { orientation = o; };
     point_t getCoordinates();
-    Shape shapeFacing(orientation_t orientation);
+    Shape shapeFacing(orientation_t o);
     Shape shapeForClockwiseRotation();
     Shape shapeForAntiClockwiseRotation();
     void rotateClockwise();

@@ -89,9 +89,6 @@ class Game {
     /** Name of the current piece (I, J, L, etc.). */
     piece_name_t currentPieceName;
 
-    /** Orientation of the current piece (UP, RIGHT, etc.). */
-    orientation_t currentOrientation;
-
     /** The board on which pieces are accumulated when they stick. */
     Shape board;
 

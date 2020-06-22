@@ -26,16 +26,16 @@ Shape Piece::getCurrentShape() {
   return shapes[orientation];
 }
 
-void Piece::setCoordinates(point_t coordinates) {
-  this->coordinates = coordinates;
+void Piece::setCoordinates(point_t dst) {
+  coordinates = dst;
 }
 
 point_t Piece::getCoordinates() {
   return coordinates;
 }
 
-Shape Piece::shapeFacing(orientation_t orientation) {
-  return shapes[orientation];
+Shape Piece::shapeFacing(orientation_t o) {
+  return shapes[o];
 }
 
 Shape Piece::shapeForClockwiseRotation() {
