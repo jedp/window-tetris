@@ -37,6 +37,51 @@ void Shape::fillWith(char fillChar) {
   updateBoundingBox();
 }
 
+void Shape::fillRowWith(char fillChar, int row) {
+  for (int i = row * cols; i < row * cols + cols; ++i) {
+    grid[i] = fillChar;
+  }
+}
+
+bool Shape::findAndMarkRowsForRemoval() {
+  int found = false;
+  for (int row = 0; row < rows; ++row) {
+    if (noEmptySpacesInRow(row)) {
+      fillRowWith(DEAD_CELL, row);
+      found = true;
+    }
+  }
+  return found;
+}
+
+int Shape::removeRowsMarkedForRemoval() {
+  int removed = 0;
+  // If the first cell in the row is an X, the row can be removed.
+  for (int row = 0; row < rows; ++row) {
+    if (grid[row * cols] == DEAD_CELL) {
+      ++removed;
+      // Take all rows 0 .. row-1 and move them down one.
+      for (int i = row * cols + cols -1; i >= cols; --i) {
+        grid[i] = grid[i - cols];
+      }
+      // Fill in a blank first row.
+      for (int i = 0; i < cols; ++i) {
+        grid[i] = EMPTY_SPACE;
+      }
+    }
+  }
+  return removed;
+}
+
+bool Shape::noEmptySpacesInRow(int row) {
+  for (int i = cols * row; i < cols * row + cols; ++i) {
+    if (grid[i] == ' ') {
+      return false;
+    }
+  }
+  return true;
+}
+
 bool Shape::within(bbox_t other, point_t dst) {
   if (bbox.uLeft.row + dst.row < other.uLeft.row) return false;
   if (bbox.uLeft.col + dst.col < other.uLeft.col) return false;

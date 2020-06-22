@@ -13,6 +13,7 @@ Game::Game(
    sequence(sequence),
    gameOverCallback(gameOverCallback),
    stats((struct stats) { 0 }),
+   state(PLAYING),
    currentPieceName(I),
    currentOrientation(UP),
    board(Shape(20, 10, "                                                                                                                                                                                                        ")),
@@ -74,6 +75,10 @@ Game::Game(
   produceNextPiece();
 }
 
+bool Game::setGrid(const char *grid) {
+  board.fillWithChars(grid);
+}
+
 bool Game::moveLeft() {
   return move(LEFT);
 }
@@ -83,6 +88,8 @@ bool Game::moveRight() {
 }
 
 bool Game::move(orientation_t dir) {
+  if (state != PLAYING) return false;
+
   assert(dir == LEFT || dir == RIGHT || dir == DOWN);
   point_t dst;
   switch (dir) {
@@ -118,6 +125,8 @@ bool Game::move(orientation_t dir) {
 }
 
 bool Game::rotateClockwise() {
+  if (state != PLAYING) return false;
+
   if (!pieces[currentPieceName]
         .shapeForClockwiseRotation()
         .within(BOARD_AREA,
@@ -137,21 +146,60 @@ bool Game::rotateClockwise() {
 }
 
 void Game::drop() {
+  if (state != PLAYING) return;
+
   int startRow = pieces[currentPieceName].getCoordinates().row;
   while(move(DOWN)) ;
-  score(pieces[currentPieceName].getCoordinates().row - startRow);
+  scoreDroppedRows(pieces[currentPieceName].getCoordinates().row - startRow);
 
-  board.stick(pieces[currentPieceName].getCurrentShape(),
-             pieces[currentPieceName].getCoordinates());
-  produceNextPiece();
+  stickCurrentPiece();
 }
 
 void Game::tick() {
-  if (!move(DOWN)) {
-    board.stick(pieces[currentPieceName].getCurrentShape(),
-               pieces[currentPieceName].getCoordinates());
+  switch(state) {
+
+    // When PLAYING, move the piece down one row.
+    //
+    // If it can't go any further, stick it where it is and see if any rows
+    // are now full.
+    case PLAYING:
+      if (!move(DOWN)) {
+        stickCurrentPiece();
+      }
+      break;
+
+    // When SHOWING_FULL_ROWS, remove the full rows and advance state.
+    case SHOWING_FULL_ROWS:
+      scoreRemovedRows(board.removeRowsMarkedForRemoval());
+      state = DELETING_FULL_ROWS;
+      break;
+
+    // When DELETING_FULL_ROWS, produce the next piece and keep playing.
+    case DELETING_FULL_ROWS:
+      produceNextPiece();
+      state = PLAYING;
+      break;
+
+    default:
+      assert(false);
+  }
+}
+
+void Game::stickCurrentPiece() {
+  board.stick(pieces[currentPieceName].getCurrentShape(),
+             pieces[currentPieceName].getCoordinates());
+  hideCurrentPiece();
+
+  if (board.findAndMarkRowsForRemoval()) {
+    render();
+    state = SHOWING_FULL_ROWS;
+  } else {
     produceNextPiece();
   }
+}
+
+void Game::hideCurrentPiece() {
+  pieces[currentPieceName].setCoordinates(OFFSCREEN_COORDINATES);
 }
 
 void Game::produceNextPiece() {
@@ -169,8 +217,15 @@ void Game::produceNextPiece() {
   render();
 }
 
-void Game::score(int points) {
-  stats.score += points;
+void Game::scoreRemovedRows(int rows) {
+  if (rows == 1) stats.score += 30;
+  if (rows == 2) stats.score += 100;
+  if (rows == 3) stats.score += 300;
+  if (rows >= 4) stats.score += 1200;
+}
+
+void Game::scoreDroppedRows(int rows) {
+  stats.score += rows;
 }
 
 void Game::render() {

@@ -5,25 +5,8 @@
 #include <sequence.h>
 #include <unity.h>
 #include "test_desktop_data.h"
-#include <iostream>
 
 void noOpCallback() {
-}
-
-void test_empty_rows(void) {
-  int start = -2;
-  int end = -2;
-  getFullRowsRange(board0_grid, start, end);
-  TEST_ASSERT_EQUAL(-1, start);
-  TEST_ASSERT_EQUAL(-1, end);
-}
-
-void test_non_empty_rows(void) {
-  int start = -2;
-  int end = -2;
-  getFullRowsRange(board1_grid, start, end);
-  TEST_ASSERT_EQUAL(160, start);
-  TEST_ASSERT_EQUAL(200, end);
 }
 
 void test_row_empty(void) {
@@ -554,12 +537,110 @@ void test_reset(void) {
   TEST_ASSERT_EQUAL(0, game.getStats().score);
 }
 
+void test_clear_one_row_after_dropping(void) {
+  Shape canvas = Shape(20, 10, board_empty_grid);
+  Sequence sequence = Sequence(0);
+  Game game = Game(canvas, sequence, noOpCallback);
+
+  // Drop the I in the middle.
+  game.drop();
+
+  // Drop the J on the left.
+  game.moveLeft();
+  game.moveLeft();
+  game.moveLeft();
+  game.drop();
+
+  // Drop the L on the right.
+  game.moveRight();
+  game.moveRight();
+  game.moveRight();
+  game.moveRight();
+  game.drop();
+
+  // The bottom row is full and is marked for deletion.
+  TEST_ASSERT_TRUE(canvas.noEmptySpacesInRow(19));
+  TEST_ASSERT_TRUE(canvas == Shape(20, 10, board_with_full_row_marked_for_deletion));
+
+  // Ticking forward in time removes the row.
+  game.tick();
+  // Another tick exposes the next piece.
+  game.tick();
+  TEST_ASSERT_TRUE(canvas == Shape(20, 10, board_with_full_row_deleted_and_next_piece_showing));
+}
+
+void test_clear_one_row_after_ticking_down() {
+  Shape canvas = Shape(20, 10, board_empty_grid);
+  Sequence sequence = Sequence(0);
+  Game game = Game(canvas, sequence, noOpCallback);
+
+  // Drop the I in the middle.
+  game.drop();
+
+  // Drop the J on the left.
+  game.moveLeft();
+  game.moveLeft();
+  game.moveLeft();
+  game.drop();
+
+  // Move the L to the right and let it eventually tick down.
+  game.moveRight();
+  game.moveRight();
+  game.moveRight();
+  game.moveRight();
+  game.tick();
+  game.tick();
+  game.tick();
+  game.tick();
+  game.tick();
+  game.tick();
+  game.tick();
+  game.tick();
+  game.tick();
+  game.tick();
+  game.tick();
+  game.tick();
+  game.tick();
+  game.tick();
+  game.tick();
+  game.tick();
+  game.tick();
+  game.tick();
+  game.tick();
+
+  // The bottom row is full and is marked for deletion.
+  TEST_ASSERT_TRUE(canvas.noEmptySpacesInRow(19));
+  TEST_ASSERT_TRUE(canvas == Shape(20, 10, board_with_full_row_marked_for_deletion));
+
+  // Ticking forward in time removes the row.
+  game.tick();
+  // Another tick exposes the next piece.
+  game.tick();
+  TEST_ASSERT_TRUE(canvas == Shape(20, 10, board_with_full_row_deleted_and_next_piece_showing));
+}
+
+void test_scoring(void) {
+  Shape canvas = Shape(20, 10, board_empty_grid);
+  Sequence sequence = Sequence(0);
+  Game game = Game(canvas, sequence, noOpCallback);
+
+  game.setGrid(board0_grid);
+  game.rotateClockwise();
+
+  game.moveRight();
+  game.moveRight();
+  game.moveRight();
+  game.moveRight();
+  game.drop();
+
+  game.tick();
+  game.tick();
+  // Score 16 rows dropped, and 1200 for a "tetris".
+  TEST_ASSERT_EQUAL(1216, game.getStats().score);
+}
+
 int main(int argc, char** argv) {
   UNITY_BEGIN();
-
-  // board.h
-  RUN_TEST(test_empty_rows);
-  RUN_TEST(test_non_empty_rows);
 
   // piece.h
   RUN_TEST(test_rotate_clockwise);
@@ -596,6 +677,9 @@ int main(int argc, char** argv) {
   RUN_TEST(test_drop);
   RUN_TEST(test_game_over);
   RUN_TEST(test_drop_points);
+  RUN_TEST(test_clear_one_row_after_dropping);
+  RUN_TEST(test_clear_one_row_after_ticking_down);
+  RUN_TEST(test_scoring);
 
   UNITY_END();
 }

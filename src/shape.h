@@ -32,6 +32,10 @@ class Shape {
     void setCharAt(char c, point_t coordinates);
     void fillWithChars(const char *chars);
     void fillWith(char fillChar);
+    void fillRowWith(char fillChar, int row);
+    bool findAndMarkRowsForRemoval();
+    int removeRowsMarkedForRemoval();
+    bool noEmptySpacesInRow(int row);
     bool within(bbox_t bbox, point_t dst);
     bool collides(const Shape &other, point_t dst);
     void stick(const Shape &other, point_t dst);
