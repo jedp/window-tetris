@@ -3,7 +3,43 @@
 #include <shape.h>
 #include <assert.h>
 
+const char *initialBoardGrid = new char[H_BOARD * W_BOARD] { ' ' };
+
 // Reference for pieces: https://tetris.fandom.com/wiki/Orientation
+const Shape I_UP    = Shape(4, 4, "    IIII        ");
+const Shape I_RIGHT = Shape(4, 4, "  I   I   I   I ");
+const Shape I_DOWN  = Shape(4, 4, "        IIII    ");
+const Shape I_LEFT  = Shape(4, 4, " I   I   I   I  ");
+
+const Shape J_UP    = Shape(4, 4, "J   JJJ         ");
+const Shape J_RIGHT = Shape(4, 4, " JJ  J   J      ");
+const Shape J_DOWN  = Shape(4, 4, "    JJJ   J     ");
+const Shape J_LEFT  = Shape(4, 4, " J   J  JJ      ");
+
+const Shape L_UP    = Shape(4, 4, "  L LLL         ");
+const Shape L_RIGHT = Shape(4, 4, " L   L   LL     ");
+const Shape L_DOWN  = Shape(4, 4, "    LLL L       ");
+const Shape L_LEFT  = Shape(4, 4, "LL   L   L      ");
+
+const Shape O_UP    = Shape(4, 4, "     OO  OO     ");
+const Shape O_RIGHT = Shape(4, 4, "     OO  OO     ");
+const Shape O_DOWN  = Shape(4, 4, "     OO  OO     ");
+const Shape O_LEFT  = Shape(4, 4, "     OO  OO     ");
+
+const Shape S_UP    = Shape(4, 4, " SS SS          ");
+const Shape S_RIGHT = Shape(4, 4, " S   SS   S     ");
+const Shape S_DOWN  = Shape(4, 4, "     SS SS      ");
+const Shape S_LEFT  = Shape(4, 4, "S   SS   S      ");
+
+const Shape T_UP    = Shape(4, 4, " T  TTT         ");
+const Shape T_RIGHT = Shape(4, 4, "T   TT  T       ");
+const Shape T_DOWN  = Shape(4, 4, "    TTT  T      ");
+const Shape T_LEFT  = Shape(4, 4, " T  TT   T      ");
+
+const Shape Z_UP    = Shape(4, 4, "ZZ   ZZ         ");
+const Shape Z_RIGHT = Shape(4, 4, "  Z  ZZ  Z      ");
+const Shape Z_DOWN  = Shape(4, 4, "    ZZ   ZZ     ");
+const Shape Z_LEFT  = Shape(4, 4, " Z  ZZ  Z       ");
 
 Game::Game(
     const Shape &canvas,
@@ -16,62 +52,18 @@ Game::Game(
    state(PLAYING),
    currentPieceName(I),
    currentOrientation(UP),
-   board(Shape(20, 10, "                                                                                                                                                                                                        ")),
+   board(Shape(20, 10, initialBoardGrid)),
    pieces{
-     [I] = Piece(4, 4,
-       Shape(4, 4, "    IIII        "),
-       Shape(4, 4, "  I   I   I   I "),
-       Shape(4, 4, "        IIII    "),
-       Shape(4, 4, " I   I   I   I  ")
-     ),
-
-     [J] = Piece(4, 4,
-       Shape(4, 4, "J   JJJ         "),
-       Shape(4, 4, " JJ  J   J      "),
-       Shape(4, 4, "    JJJ   J     "),
-       Shape(4, 4, " J   J  JJ      ")
-     ),
-
-     [L] = Piece(4, 4,
-       Shape(4, 4, "  L LLL         "),
-       Shape(4, 4, " L   L   LL     "),
-       Shape(4, 4, "    LLL L       "),
-       Shape(4, 4, "LL   L   L      ")
-     ),
-
-     [O] = Piece(4, 4,
-       Shape(4, 4, "     OO  OO     "),
-       Shape(4, 4, "     OO  OO     "),
-       Shape(4, 4, "     OO  OO     "),
-       Shape(4, 4, "     OO  OO     ")
-     ),
-
-     [S] = Piece(4, 4,
-       Shape(4, 4, " SS SS          "),
-       Shape(4, 4, " S   SS   S     "),
-       Shape(4, 4, "     SS SS      "),
-       Shape(4, 4, "S   SS   S      ")
-     ),
-
-     [T] = Piece(4, 4,
-       Shape(4, 4, " T  TTT         "),
-       Shape(4, 4, "T   TT  T       "),
-       Shape(4, 4, "    TTT  T      "),
-       Shape(4, 4, " T  TT   T      ")
-     ),
-
-     [Z] = Piece(4, 4,
-       Shape(4, 4, "ZZ   ZZ         "),
-       Shape(4, 4, "  Z  ZZ  Z      "),
-       Shape(4, 4, "    ZZ   ZZ     "),
-       Shape(4, 4, " Z  ZZ  Z       ")
-       )
+     [I] = Piece(I_UP, I_RIGHT, I_DOWN, I_LEFT),
+     [J] = Piece(J_UP, J_RIGHT, J_DOWN, J_LEFT),
+     [L] = Piece(L_UP, L_RIGHT, L_DOWN, L_LEFT),
+     [O] = Piece(O_UP, O_RIGHT, O_DOWN, O_LEFT),
+     [S] = Piece(S_UP, S_RIGHT, S_DOWN, S_LEFT),
+     [T] = Piece(T_UP, T_RIGHT, T_DOWN, T_LEFT),
+     [Z] = Piece(Z_UP, Z_RIGHT, Z_DOWN, Z_LEFT),
    }
 {
-
-
   reset();
-
   produceNextPiece();
 }
 
@@ -158,6 +150,9 @@ void Game::drop() {
 void Game::tick() {
   switch(state) {
 
+    case GAME_OVER:
+      return;
+
     // When PLAYING, move the piece down one row.
     //
     // If it can't go any further, stick it where it is and see if any rows
@@ -218,6 +213,7 @@ void Game::produceNextPiece() {
 }
 
 void Game::scoreRemovedRows(int rows) {
+  // Classic scoring.
   if (rows == 1) stats.score += 30;
   if (rows == 2) stats.score += 100;
   if (rows == 3) stats.score += 300;
@@ -225,14 +221,16 @@ void Game::scoreRemovedRows(int rows) {
 }
 
 void Game::scoreDroppedRows(int rows) {
+  // Classic scoring.
   stats.score += rows;
 }
 
 void Game::render() {
+  // Erase the canvas. Then print the board and current piece on it.
   canvas.fillWith(EMPTY_SPACE);
   canvas.stick(board, (struct point) { 0, 0});
-  canvas.stick(pieces[currentPieceName].getCurrentShape(), pieces[currentPieceName].getCoordinates());
-  canvas.updateBoundingBox();
+  canvas.stick(pieces[currentPieceName].getCurrentShape(),
+               pieces[currentPieceName].getCoordinates());
 }
 
 void Game::reset() {
@@ -240,9 +238,12 @@ void Game::reset() {
 
   board.fillWith(EMPTY_SPACE);
   canvas.fillWith(EMPTY_SPACE);
+
+  state = PLAYING;
 }
 
 void Game::gameOver() {
+  state = GAME_OVER;
   gameOverCallback();
 }
 
