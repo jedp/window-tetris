@@ -29,7 +29,7 @@ typedef enum PieceName {
 } piece_name_t;
 
 class Piece {
-  public:
+ public:
     Piece(
         Shape up,
         Shape right,
@@ -37,7 +37,7 @@ class Piece {
         Shape left);
     Shape getCurrentShape();
     void setCoordinates(point_t dst);
-    void setOrientation(orientation_t o) { orientation = o; };
+    void setOrientation(orientation_t o) { orientation = o; }
     point_t getCoordinates();
     Shape shapeFacing(orientation_t o);
     Shape shapeForClockwiseRotation();
@@ -45,7 +45,7 @@ class Piece {
     void rotateClockwise();
     void rotateAntiClockwise();
 
-  private:
+ private:
     point_t coordinates;
     orientation_t orientation;
     Shape shapes[4];

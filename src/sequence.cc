@@ -4,7 +4,7 @@
 #include "Arduino.h"
 #endif
 
-void swap(piece_name_t *seq, int i, int j);
+void swapItems(piece_name_t *seq, int i, int j);
 
 Random::Random(uint32_t seed_)
 : seed(seed_) {
@@ -40,7 +40,7 @@ void Sequence::reshuffle() {
 
   for (uint8_t i = 0; i < NUM_PIECES; ++i) {
     uint8_t k = random.choice(i, NUM_PIECES);
-    swap(seq, k, NUM_PIECES - k);
+    swapItems(seq, k, NUM_PIECES - k);
   }
 }
 
@@ -51,11 +51,10 @@ void Sequence::reset() {
   }
 }
 
-void swap(piece_name_t *seq, int i, int j) {
+void swapItems(piece_name_t *seq, int i, int j) {
   piece_name_t temp;
   temp = seq[i];
   seq[i] = seq[j];
   seq[j] = temp;
 }
-
 

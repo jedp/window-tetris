@@ -98,7 +98,7 @@ class Game {
     Piece pieces[NUM_PIECES];
 
     /** Move the piece in direction dir, if unimpeded. */
-    bool move(orientation_t dir);
+    bool movePiece(orientation_t dir);
 
     /** Cause the current piece to stick where it is on the board. */
     void stickCurrentPiece();
