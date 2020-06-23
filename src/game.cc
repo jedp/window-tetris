@@ -73,14 +73,14 @@ void Game::play() {
 }
 
 bool Game::moveLeft() {
-  return move(LEFT);
+  return movePiece(LEFT);
 }
 
 bool Game::moveRight() {
-  return move(RIGHT);
+  return movePiece(RIGHT);
 }
 
-bool Game::move(orientation_t dir) {
+bool Game::movePiece(orientation_t dir) {
   if (state != PLAYING) return false;
 
   assert(dir == LEFT || dir == RIGHT || dir == DOWN);
@@ -143,7 +143,7 @@ void Game::drop() {
 
   int startRow = pieces[currentPieceName].getCoordinates().row;
 
-  while (move(DOWN)) {}
+  while (movePiece(DOWN)) {}
 
   scoreDroppedRows(pieces[currentPieceName].getCoordinates().row - startRow);
 
@@ -160,7 +160,7 @@ void Game::tick() {
     // If it can't go any further, stick it where it is and see if any rows
     // are now full.
     case PLAYING:
-      if (!move(DOWN)) {
+      if (!movePiece(DOWN)) {
         stickCurrentPiece();
       }
       break;

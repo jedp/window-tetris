@@ -35,9 +35,11 @@ cache:
 
 install:
   - pip install -U platformio
+  - pip install -U cpplint
   - platformio update
 
 script:
+  - cpplint src/*
   - platformio test -e native
 
 notifications:

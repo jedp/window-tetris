@@ -1,9 +1,9 @@
 #include <shape.h>
 #include <piece.h>
 
-Shape::Shape(int rows, int cols, const char *chars)
-: rows(rows),
-  cols(cols),
+Shape::Shape(int rows_, int cols_, const char *chars)
+: rows(rows_),
+  cols(cols_),
   grid(new char[rows * cols + 1]()) {
   for (int i = 0; i < rows * cols; ++i) {
     this->grid[i] = chars[i];
