@@ -1,38 +1,20 @@
-#pragma once
+#ifndef SRC_SEQUENCE_H_
+#define SRC_SEQUENCE_H_
 
-#include <piece.h>
+#include <stdint.h>
 
-/**
- * Interface for a random number generator used by Sequence.
- */
-class Random {
- public:
-    explicit Random(uint32_t seed_);
-    uint32_t choice(uint32_t from, uint32_t to);
+#include <pieces.h>
 
- private:
-    uint32_t seed;
-};
+typedef struct {
+  shape_name_t shapes[NUM_SHAPES];
+  uint8_t iteration;
+} sequence_t;
 
-/**
- * Endlessly generates the next piece to play.
- */
-class Sequence {
- public:
-    explicit Sequence(uint32_t seed);
+void initSequence(sequence_t *sequence, uint32_t seed);
 
-    /**
-     * Return the next piece to display.
-     *
-     * According to the rules of Tetris, each of the seven pieces will be
-     * generated once before another is generated again.
-     */
-    piece_name_t next();
+void reshuffle(sequence_t *sequence);
 
- private:
-    Random random;
-    piece_name_t seq[NUM_PIECES];
-    int current_piece_index;
-    void reshuffle();
-    void reset();
-};
+shape_name_t next(sequence_t *sequence);
+
+#endif  // SRC_SEQUENCE_H_
+

@@ -1,60 +1,51 @@
 #include <sequence.h>
 
+#include <string.h>
+
 #ifdef ARDUINO
 #include "Arduino.h"
 #endif
 
-void swapItems(piece_name_t *seq, int i, int j);
+void swapElems(shape_name_t *list, uint8_t p, uint8_t q) {
+  shape_name_t temp;
+  temp = list[p];
+  list[p] = list[q];
+  list[q] = temp;
+}
 
-Random::Random(uint32_t seed_)
-: seed(seed_) {
+void initSequence(sequence_t *sequence, uint32_t seed) {
 #ifdef ARDUINO
   randomSeed(seed);
 #endif
+
+  shape_name_t names[] = { I, J, L, O, S, T, Z };
+  memcpy(sequence->shapes, names, NUM_SHAPES * sizeof(shape_name_t));
+  sequence->iteration = 0;
+
+  reshuffle(sequence);
 }
 
-uint32_t Random::choice(uint32_t from, uint32_t to) {
+void reshuffle(sequence_t *sequence) {
+  for (uint8_t i = 0; i < NUM_SHAPES; ++i) {
 #ifdef ARDUINO
-  return random(from, to);
-#else
-  return from + (seed % to);
+    uint8_t k = random(i, NUM_SHAPES);
+#else  // We are running unit tests.
+    uint8_t k = i;
 #endif
-}
-
-Sequence::Sequence(uint32_t seed) : random(seed) {
-  reshuffle();
-}
-
-piece_name_t Sequence::next() {
-  piece_name_t nextPiece = seq[current_piece_index++];
-
-  if (current_piece_index == NUM_PIECES) {
-    reshuffle();
+    swapElems(sequence->shapes, k, NUM_SHAPES - 1 - k);
   }
 
-  return nextPiece;
+  sequence->iteration = 0;
 }
 
-void Sequence::reshuffle() {
-  reset();
+shape_name_t next(sequence_t *sequence) {
+  shape_name_t shape = sequence->shapes[sequence->iteration++];
 
-  for (uint8_t i = 0; i < NUM_PIECES; ++i) {
-    uint8_t k = random.choice(i, NUM_PIECES);
-    swapItems(seq, k, NUM_PIECES - k);
+  if (sequence->iteration == NUM_SHAPES) {
+    sequence->iteration = 0;
+    reshuffle(sequence);
   }
-}
 
-void Sequence::reset() {
-  current_piece_index = 0;
-  for (uint8_t i = 0; i < NUM_PIECES; ++i) {
-    seq[i] = (PieceName)i;
-  }
-}
-
-void swapItems(piece_name_t *seq, int i, int j) {
-  piece_name_t temp;
-  temp = seq[i];
-  seq[i] = seq[j];
-  seq[j] = temp;
+  return shape;
 }
 

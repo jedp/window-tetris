@@ -1,157 +1,158 @@
 #include <game.h>
-#include <shape.h>
+
 #include <assert.h>
 
-const char *initialBoardGrid = new char[H_BOARD * W_BOARD] { ' ' };
+#include <sequence.h>
 
-// Reference for pieces: https://tetris.fandom.com/wiki/Orientation
-const Shape I_UP    = Shape(4, 4, "    IIII        ");
-const Shape I_RIGHT = Shape(4, 4, "  I   I   I   I ");
-const Shape I_DOWN  = Shape(4, 4, "        IIII    ");
-const Shape I_LEFT  = Shape(4, 4, " I   I   I   I  ");
+uint16_t scoreForDroppedRows(uint8_t rows);
+uint16_t scoreForRemovedRows(uint8_t rows);
 
-const Shape J_UP    = Shape(4, 4, "J   JJJ         ");
-const Shape J_RIGHT = Shape(4, 4, " JJ  J   J      ");
-const Shape J_DOWN  = Shape(4, 4, "    JJJ   J     ");
-const Shape J_LEFT  = Shape(4, 4, " J   J  JJ      ");
+void reset(game_t *game, sequence_t *sequence) {
+  game->sequence = sequence;
+  game->state = PLAYING;
+  game->score = 0;
+  game->showPiece = true;
 
-const Shape L_UP    = Shape(4, 4, "  L LLL         ");
-const Shape L_RIGHT = Shape(4, 4, " L   L   LL     ");
-const Shape L_DOWN  = Shape(4, 4, "    LLL L       ");
-const Shape L_LEFT  = Shape(4, 4, "LL   L   L      ");
+  reshuffle(game->sequence);
 
-const Shape O_UP    = Shape(4, 4, "     OO  OO     ");
-const Shape O_RIGHT = Shape(4, 4, "     OO  OO     ");
-const Shape O_DOWN  = Shape(4, 4, "     OO  OO     ");
-const Shape O_LEFT  = Shape(4, 4, "     OO  OO     ");
+  initBoard(&(game->canvas));
+  initBoard(&(game->board));
+  shape_name_t nextName = next(game->sequence);
+  initShape(&(game->piece), nextName);
+}
 
-const Shape S_UP    = Shape(4, 4, " SS SS          ");
-const Shape S_RIGHT = Shape(4, 4, " S   SS   S     ");
-const Shape S_DOWN  = Shape(4, 4, "     SS SS      ");
-const Shape S_LEFT  = Shape(4, 4, "S   SS   S      ");
+void produceNextPiece(game_t *game) {
+  game->showPiece = true;
+  shape_name_t nextName = next(game->sequence);
 
-const Shape T_UP    = Shape(4, 4, " T  TTT         ");
-const Shape T_RIGHT = Shape(4, 4, "T   TT  T       ");
-const Shape T_DOWN  = Shape(4, 4, "    TTT  T      ");
-const Shape T_LEFT  = Shape(4, 4, " T  TT   T      ");
+  initShape(&(game->piece), nextName);
 
-const Shape Z_UP    = Shape(4, 4, "ZZ   ZZ         ");
-const Shape Z_RIGHT = Shape(4, 4, "  Z  ZZ  Z      ");
-const Shape Z_DOWN  = Shape(4, 4, "    ZZ   ZZ     ");
-const Shape Z_LEFT  = Shape(4, 4, " Z  ZZ  Z       ");
-
-Game::Game(
-    const Shape &canvas_,
-    const Sequence &sequence_,
-    void (*gameOverCallback_)(void))
-: canvas(canvas_),
-  sequence(sequence_),
-  gameOverCallback(gameOverCallback_),
-  stats((struct stats) { 0 }),
-  state(PLAYING),
-  currentPieceName(I),
-  board(Shape(20, 10, initialBoardGrid)),
-  pieces{
-    [I] = Piece(I_UP, I_RIGHT, I_DOWN, I_LEFT),
-    [J] = Piece(J_UP, J_RIGHT, J_DOWN, J_LEFT),
-    [L] = Piece(L_UP, L_RIGHT, L_DOWN, L_LEFT),
-    [O] = Piece(O_UP, O_RIGHT, O_DOWN, O_LEFT),
-    [S] = Piece(S_UP, S_RIGHT, S_DOWN, S_LEFT),
-    [T] = Piece(T_UP, T_RIGHT, T_DOWN, T_LEFT),
-    [Z] = Piece(Z_UP, Z_RIGHT, Z_DOWN, Z_LEFT),
+  if (collides(&(game->board),
+               game->piece.name,
+               game->piece.orientation,
+               &START_POINT)) {
+    game->state = GAME_OVER;
+    return;
   }
-{
+
+  render(game);
 }
 
-void Game::setGrid(const char *grid) {
-  board.fillWithChars(grid);
+void render(game_t *game) {
+  // Clear the canvas.
+  initBoard(&(game->canvas));
+
+  // Stick the board and the current piece to the canvas.
+  setGrid(&(game->canvas), game->board.grid);
+  if (game->showPiece) {
+    stick(&(game->canvas), &(game->piece), &(game->piece.location));
+  }
 }
 
-void Game::play() {
-  reset();
-  produceNextPiece();
+
+bool movePieceLeft(game_t *game) {
+  return movePiece(game, LEFT);
 }
 
-bool Game::moveLeft() {
-  return movePiece(LEFT);
+bool movePieceRight(game_t *game) {
+  return movePiece(game, RIGHT);
 }
 
-bool Game::moveRight() {
-  return movePiece(RIGHT);
-}
-
-bool Game::movePiece(orientation_t dir) {
-  if (state != PLAYING) return false;
-
-  assert(dir == LEFT || dir == RIGHT || dir == DOWN);
+bool movePiece(game_t *game, orientation_t dir) {
   point_t dst;
   switch (dir) {
-    case RIGHT:
-      dst.row = pieces[currentPieceName].getCoordinates().row;
-      dst.col = pieces[currentPieceName].getCoordinates().col + 1;
-      break;
     case LEFT:
-      dst.row = pieces[currentPieceName].getCoordinates().row;
-      dst.col = pieces[currentPieceName].getCoordinates().col - 1;
+      dst.row = game->piece.location.row;
+      dst.col = game->piece.location.col - 1;
+      break;
+    case RIGHT:
+      dst.row = game->piece.location.row;
+      dst.col = game->piece.location.col + 1;
       break;
     case DOWN:
-      dst.row = pieces[currentPieceName].getCoordinates().row + 1;
-      dst.col = pieces[currentPieceName].getCoordinates().col;
+      dst.row = game->piece.location.row + 1;
+      dst.col = game->piece.location.col;
       break;
     default:
       assert(false);
   }
 
-  if (!pieces[currentPieceName].getCurrentShape().within(BOARD_AREA, dst)) {
+  // Is the piece still on the board at the proposed location?
+  if (!inside(&(game->board),
+              game->piece.name,
+              game->piece.orientation,
+              &dst)) {
     return false;
   }
 
-  if (board.collides(pieces[currentPieceName].getCurrentShape(), dst)) {
+  // Is the piece still free of the other shapes on the board?
+  if (collides(&(game->board),
+               game->piece.name,
+               game->piece.orientation,
+               &dst)) {
     return false;
   }
 
-  pieces[currentPieceName].setCoordinates(dst);
+  game->piece.location = dst;
 
-  render();
+  render(game);
 
   return true;
 }
 
-bool Game::rotateClockwise() {
-  if (state != PLAYING) return false;
+bool rotatePiece(game_t *game) {
+  if (game->state != PLAYING) return false;
 
-  if (!pieces[currentPieceName]
-        .shapeForClockwiseRotation()
-        .within(BOARD_AREA,
-                pieces[currentPieceName].getCoordinates())) {
-    return false;
-  }
-  if (board.collides(pieces[currentPieceName].shapeForClockwiseRotation(),
-                     pieces[currentPieceName].getCoordinates())) {
+  if (!inside(&(game->board),
+              game->piece.name,
+              nextClockwise(game->piece.orientation),
+              &(game->piece.location))) {
     return false;
   }
 
-  pieces[currentPieceName].rotateClockwise();
+  if (collides(&(game->board),
+               game->piece.name,
+               nextClockwise(game->piece.orientation),
+               &(game->piece.location))) {
+    return false;
+  }
 
-  render();
+  game->piece.orientation = nextClockwise(game->piece.orientation);
+  updateGrid(&(game->piece));
+
+  render(game);
 
   return true;
 }
 
-void Game::drop() {
-  if (state != PLAYING) return;
+void dropPiece(game_t *game) {
+  if (game->state != PLAYING) return;
 
-  int startRow = pieces[currentPieceName].getCoordinates().row;
+  int startRow = game->piece.location.row;
 
-  while (movePiece(DOWN)) {}
+  while (movePiece(game, DOWN)) {}
 
-  scoreDroppedRows(pieces[currentPieceName].getCoordinates().row - startRow);
+  game->score += scoreForDroppedRows(game->piece.location.row - startRow);
 
-  stickCurrentPiece();
+  stickPiece(game);
 }
 
-void Game::tick() {
-  switch (state) {
+void stickPiece(game_t *game) {
+  stick(&(game->board), &(game->piece), &(game->piece.location));
+
+  render(game);
+  if (markDeadRows(&(game->board))) {
+    game->state = SHOWING_FULL_ROWS;
+
+    // Hide the current piece while we're doing fancy row-destroying animation.
+    game->showPiece = false;
+  } else {
+    produceNextPiece(game);
+  }
+}
+
+void tick(game_t *game) {
+  switch (game->state) {
     case GAME_OVER:
       return;
 
@@ -160,21 +161,21 @@ void Game::tick() {
     // If it can't go any further, stick it where it is and see if any rows
     // are now full.
     case PLAYING:
-      if (!movePiece(DOWN)) {
-        stickCurrentPiece();
+      if (!movePiece(game, DOWN)) {
+        stickPiece(game);
       }
       break;
 
     // When SHOWING_FULL_ROWS, remove the full rows and advance state.
     case SHOWING_FULL_ROWS:
-      scoreRemovedRows(board.removeRowsMarkedForRemoval());
-      state = DELETING_FULL_ROWS;
+      game->score += scoreForRemovedRows(removeDeadRows(&(game->board)));
+      game->state = DELETING_FULL_ROWS;
       break;
 
     // When DELETING_FULL_ROWS, produce the next piece and keep playing.
     case DELETING_FULL_ROWS:
-      produceNextPiece();
-      state = PLAYING;
+      produceNextPiece(game);
+      game->state = PLAYING;
       break;
 
     default:
@@ -182,70 +183,16 @@ void Game::tick() {
   }
 }
 
-void Game::stickCurrentPiece() {
-  board.stick(pieces[currentPieceName].getCurrentShape(),
-             pieces[currentPieceName].getCoordinates());
-  hideCurrentPiece();
-
-  if (board.findAndMarkRowsForRemoval()) {
-    render();
-    state = SHOWING_FULL_ROWS;
-  } else {
-    produceNextPiece();
-  }
-}
-
-void Game::hideCurrentPiece() {
-  pieces[currentPieceName].setCoordinates(OFFSCREEN_COORDINATES);
-}
-
-void Game::produceNextPiece() {
-  currentPieceName = sequence.next();
-
-  pieces[currentPieceName].setOrientation(UP);
-
-  if (board.collides(pieces[currentPieceName].getCurrentShape(),
-                     START_COORDINATES)) {
-    gameOver();
-  }
-
-  pieces[currentPieceName].setCoordinates(START_COORDINATES);
-
-  render();
-}
-
-void Game::scoreRemovedRows(int rows) {
+uint16_t scoreForRemovedRows(uint8_t rows) {
   // Classic scoring.
-  if (rows == 1) stats.score += 30;
-  if (rows == 2) stats.score += 100;
-  if (rows == 3) stats.score += 300;
-  if (rows >= 4) stats.score += 1200;
+  if (rows == 1) return 30;
+  if (rows == 2) return 100;
+  if (rows == 3) return 300;
+  return 1200;
 }
 
-void Game::scoreDroppedRows(int rows) {
+uint16_t scoreForDroppedRows(uint8_t rows) {
   // Classic scoring.
-  stats.score += rows;
-}
-
-void Game::render() {
-  // Erase the canvas. Then print the board and current piece on it.
-  canvas.fillWith(EMPTY_SPACE);
-  canvas.stick(board, (struct point) { 0, 0});
-  canvas.stick(pieces[currentPieceName].getCurrentShape(),
-               pieces[currentPieceName].getCoordinates());
-}
-
-void Game::reset() {
-  stats = (struct stats) { 0 };
-
-  board.fillWith(EMPTY_SPACE);
-  canvas.fillWith(EMPTY_SPACE);
-
-  state = PLAYING;
-}
-
-void Game::gameOver() {
-  state = GAME_OVER;
-  gameOverCallback();
+  return rows;
 }
 
