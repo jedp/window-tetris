@@ -88,6 +88,28 @@ const char *board_with_first_piece_r1_drop_and_drop_six_more =
   "     I    "
   "     I    ";
 
+const char *board_with_first_piece_r1_drop_and_drop_six_more_moved =
+  "          "
+  "          "
+  "  IIII    "
+  "          "
+  "   ZZ     "
+  "    ZZ    "
+  "    T     "
+  "   TTT    "
+  "    SS    "
+  "   SS     "
+  "    OO    "
+  "    OO    "
+  "     L    "
+  "   LLL    "
+  "   J      "
+  "   JJJ    "
+  "     I    "
+  "     I    "
+  "     I    "
+  "     I    ";
+
 const char *board_with_first_piece_r2 =
   "          "
   "          "
@@ -242,6 +264,28 @@ const char *board_with_first_piece_far_left_dropped_new_piece_showing =
   "IIII      ";
 
 const char *board_with_second_piece_dropped =
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "   J      "
+  "   JJJ    "
+  "IIII      ";
+
+const char *board_with_second_piece_dropped_third_piece_showing =
   "     L    "
   "   LLL    "
   "          "
@@ -373,4 +417,70 @@ const char *board1_grid =
   "JJJLTJJZII"
   "ILLLTTZZII"
   "IOOSTIZZII";
+
+const char *board1_grid_dead_rows_marked =
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "T  OOS    "
+  "TTZOOSS   "
+  "TZZTZZS   "
+  "SZLTTZZL  "
+  "SSLTOOJL  "
+  "XXXXXXXXXX"
+  "XXXXXXXXXX"
+  "XXXXXXXXXX"
+  "XXXXXXXXXX";
+
+const char *board1_grid_dead_rows_removed =
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "T  OOS    "
+  "TTZOOSS   "
+  "TZZTZZS   "
+  "SZLTTZZL  "
+  "SSLTOOJL  ";
+
+const char *board1_grid_resolved_with_new_I =
+  "          "
+  "   IIII   "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "          "
+  "T  OOS    "
+  "TTZOOSS   "
+  "TZZTZZS   "
+  "SZLTTZZL  "
+  "SSLTOOJL  ";
 
