@@ -4,7 +4,7 @@ import serial
 import curses
 from curses import wrapper
 
-def listen(on_data, device="/dev/ttyACM0", baudrate=19200):
+def listen(on_data, device="/dev/ttyACM0", baudrate=28800):
     s = serial.Serial(device)
     s.baudrate = baudrate
     s.flushInput()
