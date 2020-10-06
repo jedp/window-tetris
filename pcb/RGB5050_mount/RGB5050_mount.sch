@@ -1,0 +1,325 @@
+EESchema Schematic File Version 4
+EELAYER 30 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 1 1
+Title ""
+Date ""
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Comp
+L LED:Inolux_IN-PI554FCH RGB_5050
+U 1 1 5F7C1B6D
+P 3750 2950
+F 0 "RGB_5050" H 4094 2996 50  0000 L CNN
+F 1 "Inolux_IN-PI554FCH" H 4094 2905 50  0000 L CNN
+F 2 "LED_SMD:LED_Inolux_IN-PI554FCH_PLCC4_5.0x5.0mm_P3.2mm" H 3800 2650 50  0001 L TNN
+F 3 "http://www.inolux-corp.com/datasheet/SMDLED/Addressable%20LED/IN-PI554FCH.pdf" H 3850 2575 50  0001 L TNN
+	1    3750 2950
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR03
+U 1 1 5F7C2711
+P 3750 2500
+F 0 "#PWR03" H 3750 2250 50  0001 C CNN
+F 1 "GND" H 3755 2327 50  0000 C CNN
+F 2 "" H 3750 2500 50  0001 C CNN
+F 3 "" H 3750 2500 50  0001 C CNN
+	1    3750 2500
+	-1   0    0    1   
+$EndComp
+$Comp
+L power:+5V #PWR04
+U 1 1 5F7C34FC
+P 3750 3400
+F 0 "#PWR04" H 3750 3250 50  0001 C CNN
+F 1 "+5V" H 3765 3573 50  0000 C CNN
+F 2 "" H 3750 3400 50  0001 C CNN
+F 3 "" H 3750 3400 50  0001 C CNN
+	1    3750 3400
+	-1   0    0    1   
+$EndComp
+Text GLabel 3250 2950 0    50   Input ~ 0
+D_IN
+Text GLabel 4400 2850 2    50   Output ~ 0
+D_OUT
+Wire Wire Line
+	4050 2950 4400 2950
+Wire Wire Line
+	4400 2950 4400 2850
+Wire Wire Line
+	3250 2950 3450 2950
+Wire Wire Line
+	3750 2500 3750 2650
+Wire Wire Line
+	3750 3250 3750 3400
+Text GLabel 2250 3000 0    50   Output ~ 0
+D_IN
+Text GLabel 5650 2950 0    50   Output ~ 0
+D_OUT
+$Comp
+L power:+5V #PWR02
+U 1 1 5F7D2B14
+P 2150 3400
+F 0 "#PWR02" H 2150 3250 50  0001 C CNN
+F 1 "+5V" V 2150 3550 50  0000 L CNN
+F 2 "" H 2150 3400 50  0001 C CNN
+F 3 "" H 2150 3400 50  0001 C CNN
+	1    2150 3400
+	0    1    1    0   
+$EndComp
+$Comp
+L power:+5V #PWR05
+U 1 1 5F7D35DE
+P 5650 2550
+F 0 "#PWR05" H 5650 2400 50  0001 C CNN
+F 1 "+5V" V 5665 2678 50  0000 L CNN
+F 2 "" H 5650 2550 50  0001 C CNN
+F 3 "" H 5650 2550 50  0001 C CNN
+	1    5650 2550
+	0    -1   -1   0   
+$EndComp
+$Comp
+L power:GND #PWR01
+U 1 1 5F7D3DD2
+P 2150 2600
+F 0 "#PWR01" H 2150 2350 50  0001 C CNN
+F 1 "GND" V 2155 2472 50  0000 R CNN
+F 2 "" H 2150 2600 50  0001 C CNN
+F 3 "" H 2150 2600 50  0001 C CNN
+	1    2150 2600
+	0    -1   -1   0   
+$EndComp
+$Comp
+L power:GND #PWR06
+U 1 1 5F7D44EF
+P 5700 3350
+F 0 "#PWR06" H 5700 3100 50  0001 C CNN
+F 1 "GND" V 5705 3222 50  0000 R CNN
+F 2 "" H 5700 3350 50  0001 C CNN
+F 3 "" H 5700 3350 50  0001 C CNN
+	1    5700 3350
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:C_Small C1
+U 1 1 5F7CB0FE
+P 3750 1350
+F 0 "C1" H 3842 1396 50  0000 L CNN
+F 1 "C_Small" H 3842 1305 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0805_2012Metric" H 3750 1350 50  0001 C CNN
+F 3 "~" H 3750 1350 50  0001 C CNN
+	1    3750 1350
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:+5V #PWR09
+U 1 1 5F7CC768
+P 3750 1050
+F 0 "#PWR09" H 3750 900 50  0001 C CNN
+F 1 "+5V" H 3765 1223 50  0000 C CNN
+F 2 "" H 3750 1050 50  0001 C CNN
+F 3 "" H 3750 1050 50  0001 C CNN
+	1    3750 1050
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR010
+U 1 1 5F7CCECE
+P 3750 1650
+F 0 "#PWR010" H 3750 1400 50  0001 C CNN
+F 1 "GND" H 3755 1477 50  0000 C CNN
+F 2 "" H 3750 1650 50  0001 C CNN
+F 3 "" H 3750 1650 50  0001 C CNN
+	1    3750 1650
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3750 1250 3750 1050
+Wire Wire Line
+	3750 1650 3750 1450
+$Comp
+L Mechanical:MountingHole_Pad H1_Large1
+U 1 1 5F7DA9D9
+P 1550 1600
+F 0 "H1_Large1" V 1787 1603 50  0000 C CNN
+F 1 "MountingHole_Pad" V 1696 1603 50  0000 C CNN
+F 2 "MountingHole:MountingHole_2.5mm_Pad" H 1550 1600 50  0001 C CNN
+F 3 "~" H 1550 1600 50  0001 C CNN
+	1    1550 1600
+	0    -1   -1   0   
+$EndComp
+$Comp
+L Mechanical:MountingHole_Pad H3_Large1
+U 1 1 5F7DB30F
+P 6100 1450
+F 0 "H3_Large1" V 6054 1600 50  0000 L CNN
+F 1 "MountingHole_Pad" V 6145 1600 50  0000 L CNN
+F 2 "MountingHole:MountingHole_2.5mm_Pad" H 6100 1450 50  0001 C CNN
+F 3 "~" H 6100 1450 50  0001 C CNN
+	1    6100 1450
+	0    1    1    0   
+$EndComp
+$Comp
+L Mechanical:MountingHole_Pad H2_Large1
+U 1 1 5F7DB5A7
+P 1600 4300
+F 0 "H2_Large1" V 1837 4303 50  0000 C CNN
+F 1 "MountingHole_Pad" V 1746 4303 50  0000 C CNN
+F 2 "MountingHole:MountingHole_2.5mm_Pad" H 1600 4300 50  0001 C CNN
+F 3 "~" H 1600 4300 50  0001 C CNN
+	1    1600 4300
+	0    -1   -1   0   
+$EndComp
+$Comp
+L Mechanical:MountingHole_Pad H4_Large1
+U 1 1 5F7DB84D
+P 6100 4400
+F 0 "H4_Large1" V 6054 4550 50  0000 L CNN
+F 1 "MountingHole_Pad" V 6145 4550 50  0000 L CNN
+F 2 "MountingHole:MountingHole_2.5mm_Pad" H 6100 4400 50  0001 C CNN
+F 3 "~" H 6100 4400 50  0001 C CNN
+	1    6100 4400
+	0    1    1    0   
+$EndComp
+$Comp
+L power:GND #PWR07
+U 1 1 5F7DC907
+P 2150 1600
+F 0 "#PWR07" H 2150 1350 50  0001 C CNN
+F 1 "GND" V 2155 1472 50  0000 R CNN
+F 2 "" H 2150 1600 50  0001 C CNN
+F 3 "" H 2150 1600 50  0001 C CNN
+	1    2150 1600
+	0    -1   -1   0   
+$EndComp
+$Comp
+L power:+5V #PWR011
+U 1 1 5F7DCC60
+P 5450 1450
+F 0 "#PWR011" H 5450 1300 50  0001 C CNN
+F 1 "+5V" V 5465 1578 50  0000 L CNN
+F 2 "" H 5450 1450 50  0001 C CNN
+F 3 "" H 5450 1450 50  0001 C CNN
+	1    5450 1450
+	0    -1   -1   0   
+$EndComp
+$Comp
+L power:GND #PWR012
+U 1 1 5F7DD1D1
+P 5550 4400
+F 0 "#PWR012" H 5550 4150 50  0001 C CNN
+F 1 "GND" V 5555 4272 50  0000 R CNN
+F 2 "" H 5550 4400 50  0001 C CNN
+F 3 "" H 5550 4400 50  0001 C CNN
+	1    5550 4400
+	0    1    1    0   
+$EndComp
+$Comp
+L power:+5V #PWR08
+U 1 1 5F7DD4F0
+P 2250 4300
+F 0 "#PWR08" H 2250 4150 50  0001 C CNN
+F 1 "+5V" V 2265 4428 50  0000 L CNN
+F 2 "" H 2250 4300 50  0001 C CNN
+F 3 "" H 2250 4300 50  0001 C CNN
+	1    2250 4300
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	1650 1600 2150 1600
+Wire Wire Line
+	1700 4300 2250 4300
+Wire Wire Line
+	6000 1450 5450 1450
+Wire Wire Line
+	6000 4400 5550 4400
+$Comp
+L Connector:TestPoint TP1
+U 1 1 5F7EFC3A
+P 3000 1250
+F 0 "TP1" H 2942 1276 50  0000 R CNN
+F 1 "TestPoint" H 2942 1367 50  0000 R CNN
+F 2 "TestPoint:TestPoint_THTPad_D1.0mm_Drill0.5mm" H 3200 1250 50  0001 C CNN
+F 3 "~" H 3200 1250 50  0001 C CNN
+	1    3000 1250
+	-1   0    0    1   
+$EndComp
+$Comp
+L Connector:TestPoint TP2
+U 1 1 5F7F0677
+P 3350 1250
+F 0 "TP2" H 3292 1276 50  0000 R CNN
+F 1 "TestPoint" H 3292 1367 50  0000 R CNN
+F 2 "TestPoint:TestPoint_THTPad_D1.0mm_Drill0.5mm" H 3550 1250 50  0001 C CNN
+F 3 "~" H 3550 1250 50  0001 C CNN
+	1    3350 1250
+	-1   0    0    1   
+$EndComp
+$Comp
+L power:+5V #PWR0101
+U 1 1 5F7F18E6
+P 3000 950
+F 0 "#PWR0101" H 3000 800 50  0001 C CNN
+F 1 "+5V" H 3015 1123 50  0000 C CNN
+F 2 "" H 3000 950 50  0001 C CNN
+F 3 "" H 3000 950 50  0001 C CNN
+	1    3000 950 
+	1    0    0    -1  
+$EndComp
+Text GLabel 3350 900  1    50   Input ~ 0
+D_IN
+Wire Wire Line
+	3000 950  3000 1250
+Wire Wire Line
+	3350 900  3350 1250
+$Comp
+L Connector:Conn_01x03_Female J1
+U 1 1 5F818A5B
+P 1450 3000
+F 0 "J1" H 1342 2675 50  0000 C CNN
+F 1 "Conn_01x03_Female" H 1342 2766 50  0000 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical" H 1450 3000 50  0001 C CNN
+F 3 "~" H 1450 3000 50  0001 C CNN
+	1    1450 3000
+	-1   0    0    1   
+$EndComp
+$Comp
+L Connector:Conn_01x03_Female J2
+U 1 1 5F81A5BD
+P 6400 2950
+F 0 "J2" H 6428 2976 50  0000 L CNN
+F 1 "Conn_01x03_Female" H 6428 2885 50  0000 L CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical" H 6400 2950 50  0001 C CNN
+F 3 "~" H 6400 2950 50  0001 C CNN
+	1    6400 2950
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	1650 2900 2150 2900
+Wire Wire Line
+	2150 2900 2150 2600
+Wire Wire Line
+	1650 3000 2250 3000
+Wire Wire Line
+	1650 3100 2150 3100
+Wire Wire Line
+	2150 3100 2150 3400
+Wire Wire Line
+	5650 2950 6200 2950
+Wire Wire Line
+	6200 3050 5700 3050
+Wire Wire Line
+	5700 3050 5700 3350
+Wire Wire Line
+	6200 2850 5650 2850
+Wire Wire Line
+	5650 2850 5650 2550
+$EndSCHEMATC

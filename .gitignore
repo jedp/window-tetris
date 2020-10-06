@@ -1,5 +1,13 @@
+# kicad
+fp-info-cache
+_autosave*
+*.zip
+
+# platform.io
 .pio
 
 *sw[op]
+*-bak
 *~
 
+.DS_Store
