@@ -12,9 +12,14 @@ can play using the foot controller on the sidewalk.
 
 Done: game engine that plays and scores according to the classic rules.
 
+In progress:
+
+- The LED mounts have become a little project on their own.
+  See [jedp/RGB5050-mount](https://github.com/jedp/RGB5050-mount) for a
+  small and versatile PCB mount.
+
 TBD:
 
-- Build and drive 5050 LED display (parts ordered)
 - Build and be driven by external foot controller (parts ordered)
 
 ## Unit Tests
@@ -25,4 +30,9 @@ On attached Arduino device: `pio test -e uno`
 
 The native tests are run automatically by travis. But please be sure to test
 on a device before submitting changes.
+
+## License
+
+Written by Jed Parsons. Distributed under the BSD license. Read `license.txt`
+for details. All text above must be included in any redistribution.
 
